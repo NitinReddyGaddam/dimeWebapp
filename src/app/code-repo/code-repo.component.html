@@ -1,0 +1,165 @@
+<main class="container-fluid container-wrapper">
+    <section class="main-container">
+        <div class="main-header-wrapper">
+            <span class="header-text">Code Repository</span>
+        </div>
+        <div class="content-wrapper">
+            <div class="table-accordion-wrapper CodeRepository">
+                <div class="panel-group" id="accordion">
+                    <!-- Files panel -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#files-area">Files</span>
+                            </h4>
+                        </div>
+                        <div id="files-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="raw-accordion">
+                                    <div class="panel panel-default">
+                                        Files Content
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Hive panel -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#Hive-area">Hive</span>
+                            </h4>
+                        </div>
+                        <div id="Hive-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Hive Content
+                            </div>
+                        </div>
+                    </div>
+                    <!-- TestHive panel -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#TestHive-area">Test Hive Hql</span>
+                            </h4>
+                        </div>
+                        <div id="TestHive-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <ul>
+                                    <li>Thu Aug 28 14:38:12 IST 2018</li>
+                                    <li>Thu Aug 29 15:26:33 IST 2018</li>
+                                    <li>Thu Aug 30 16:16:23 IST 2018</li>
+                                    <li>Thu Aug 31 18:55:45 IST 2018</li>
+                                </ul>
+                                <a href="#">View more</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sqoop panel -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#Sqoop-area">Sqoop</span>
+                            </h4>
+                        </div>
+                        <div id="Sqoop-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Sqoop
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Java panel -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#java-area">Java</span>
+                            </h4>
+                        </div>
+                        <div id="java-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                java
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Scala panel -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#scala-area">Scala</span>
+                            </h4>
+                        </div>
+                        <div id="scala-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                scala
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sparc panel -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#sparc-area">Spark</span>
+                            </h4>
+                        </div>
+                        <div id="sparc-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Spark
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- SQL panel -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#sql-area">SQL</span>
+                            </h4>
+                        </div>
+                        <div id="sql-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                Sql
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Code Repository Right section start-->
+
+
+                <div class="Code-Repository-Right-Section">
+                    <div class="CodeRepositoryEditor"></div>
+                    <!-- Enter Comment Section-->
+                    <div class="EnterComment">
+                        <textarea placeholder="Enter Comments"></textarea>
+                        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#CodeRepositoryPopup">SUBMIT</button>
+                    </div>
+                    <!-- Enter Comment Section end-->
+                </div>
+                <!-- Modal -->
+                <div id="CodeRepositoryPopup" class="modal fade table-popup" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Code Repository</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="PopupContainer">
+                                <p class="SuccessText">Successfully comments submitted</p>
+                            </div>
+                            <div class="OkaybtnDiv">
+                                <button class="btn btn-primary btn-lg" class="close" data-dismiss="modal">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Code Repository Right section end-->
+            </div>
+        </div>
+    </section>
+</main>

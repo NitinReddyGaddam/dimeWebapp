@@ -1,0 +1,96 @@
+<main class="container-fluid container-wrapper">
+  <section class="main-container">
+    <div class="main-header-wrapper">
+      <span class="header-text">ADAS Visualization</span>
+    </div>
+    <div id=content-wrapper>
+      <div id="search-header">
+        <input type="text" id="searchQuery" spellcheck="false" class="searchQuery" [(ngModel)]="searchStr">
+        <button button class="btn btn-primary " (click)=submitFunction(); style="opacity: 20; background-color: #4d84c4;font-family: 'Myriad Semi Bold' !important;color: #ffffff;position: relative; left: 10px;">Submit</button>
+      </div>
+      <div class="main-body">
+        <div class="left-part">
+          <table class="table query-results">
+            <thead *ngFor="let header of ros_meta  | slice:0:1;">
+              <tr>
+                <th *ngFor="let column of header"> {{column}} </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of ros_meta | slice:1;let i = index" (click)="selectVin(row,i)" [class.active]="i == selectedRow">
+                <td *ngFor="let rowData of row">{{rowData}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="right-part">
+          <div class="container">
+
+            <div class="chart-box">
+
+              <div class="chart">
+                  <p>Topic :<span id="velTopic">steer_rec</span></p>
+                <div class="veh-chart" id="veh-chart"></div>
+                
+              </div>
+
+              <div class="chart">
+                  <p>Topic :<span id="acceTopic">brake_info</span></p>
+                <div class="acce-chart" id="acce-chart"></div>
+                
+              </div>
+
+            </div>
+            <div class="topic-header">
+                <p><span id="gpsTopic">Topic : gps_fix</span><span id="imageTopic"> Topic : image_metadata</span></p>
+            </div>
+            <div class="chart-box">
+
+              <div class="maps">
+                <agm-map [latitude]="initLat" [longitude]="initLng" [zoom]="zoom"
+                  [disableDefaultUI]="false" [zoomControl]="true" [fullscreenControl]="true" (mapClick)="mapClicked($event)">
+                  <agm-polyline>
+                    <ng-container *ngFor="let m of coordinates; first as isFirst; last as isLast">
+                      <agm-polyline-point [latitude]="m.latitude" [longitude]="m.longitude">
+                      </agm-polyline-point>
+                      <agm-marker *ngIf="isFirst" (markerClick)="clickedMarker(m.label, i)" [latitude]="m.latitude"
+                        [longitude]="m.longitude">
+                        <agm-info-window *ngIf="isFirst"  isOpen="true">
+                          <strong>{{m.timeStamp*1000|date:'medium'}}</strong>
+                        </agm-info-window>
+                      </agm-marker>
+                      <agm-marker *ngIf="pointer" [latitude]="pointer.latitude"
+                        [longitude]="pointer.longitude" [iconUrl]="icon">
+                        <agm-info-window isOpen="true">
+                          <strong>{{pointer.timeStamp*1000|date:'medium'}}</strong>
+                        </agm-info-window>
+                      </agm-marker>
+                      <agm-marker *ngIf="isLast" (markerClick)="clickedMarker(m.label, i)" [latitude]="m.latitude"
+                        [longitude]="m.longitude">
+                        <agm-info-window *ngIf="isLast" isOpen="true">
+                          <strong>{{m.timeStamp*1000|date:'medium'}}</strong>
+                        </agm-info-window>
+                      </agm-marker>
+                    </ng-container>
+                  </agm-polyline>
+                </agm-map>
+              </div>
+              <div class="image">
+
+                <img [src]="imgUrl" class="images">
+                <br>
+                <br>
+                <div class="slidecontainer">
+                  <input type="range" min="0" [max]="imgData.length-1" class="slider" id="myRange" (input)="showVal($event.target.value)"
+                    (change)="showVal($event.target.value)">
+                </div>
+                <p>TimeStamp <span id="imageTimeStamp"></span></p>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

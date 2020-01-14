@@ -1,0 +1,353 @@
+<main class="container-fluid container-wrapper">
+    <section class="main-container">
+        <div class="main-header-wrapper">
+            <span class="header-text">Staging Bucket</span>
+            <button class="btn btn-primary btn-lg float-right" (click)="validateChngeGrpForm();">Submit</button>
+        </div>
+        <div class="content-wrapper">
+            <div class="table-accordion-wrapper">
+                <div [hidden]="showGrpNotSelMesg" class="usrGrpErrFeedaback">
+                    Select the user group
+                </div>
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#raw-area"></span>
+                                Raw
+                            </h4>
+                        </div>
+                        <div id="raw-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="raw-accordion">
+                                    <div class="panel panel-default" *ngFor="let rawData of rawStagingData;let i=index;">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <span class="icon maximize-plus" data-parent="#raw-accordion"
+                                                    data-toggle="collapse" [attr.data-target]="'#raw-area-'+rawData.tblName+'-'+rawData.level"
+                                                    (click)="fetchRawColumnData(rawData.tblName,rawData.level,i);"></span>
+                                                {{rawData.tblName}}
+                                            </h4>
+                                            <select (focusout)="setUserGroup(rawData.tblName,$event.target.value,'raw');">
+                                                <option *ngFor="let userGroup of rawData.userGroups" value="{{userGroup}}">{{userGroup}}</option>
+                                            </select>
+                                        </div>
+                                        <div id="raw-area-{{rawData.tblName}}-{{rawData.level}}" data-parent="#raw-accordion"
+                                            class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <div class="panel-group" id="raw-accordion-{{rawData.tblName}}-{{rawData.level}}">
+                                                    <div class="col-md-12 position-absolute" *ngIf="showRawLoader">
+                                                        <div class="loader-circle"></div>
+                                                    </div>
+                                                    <div class="panel panel-default" *ngFor="let column of rawData.Columns">
+                                                        <div class="row panel-heading">
+                                                            <h4 class="col-md-4 panel-title">
+                                                                <span class="icon maximize-up" [attr.data-parent]="'#raw-accordion-'+rawData.tblName+'-'+rawData.level"
+                                                                    data-toggle="collapse" [attr.data-target]="'#raw-area-total-'+rawData.tblName+'-'+rawData.level+'-'+column.COLUMN_NAME"
+                                                                    (click)="loadGraph(rawData.tblName,rawData.level,column.COLUMN_NAME,i);"></span>
+                                                                {{column.COLUMN_NAME}}
+                                                            </h4>
+                                                            <label class="col-md-2">Null:
+                                                                <span>{{column.nullPercent}}</span>
+                                                            </label>
+                                                            <label class="col-md-4">Sample:
+                                                                <span>{{column.sampledata}}</span>
+                                                            </label>
+                                                            <div class="data">
+                                                                <p>Data Type : {{column.TYPE_NAME}}</p>
+                                                                <p>Is Nullable: {{column.IS_NULLABLE}}</p>
+                                                                <p>Column size :{{column.COLUMN_SIZE}}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div id="raw-area-total-{{rawData.tblName}}-{{rawData.level}}-{{column.COLUMN_NAME}}"
+                                                            [attr.data-parent]="'#raw-accordion-'+rawData.tblName+'-'+rawData.level"
+                                                            class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <div class="row graph-wrapper">
+                                                                    <div class="col col-md-4">
+                                                                        <div class="graph-area">
+                                                                            <div class="loader-circle w-100 h-100"
+                                                                                *ngIf="showGraphLoader1"></div>
+                                                                            <p *ngIf="charDataNotFound1" class="w-100 text-center"
+                                                                                style="margin-top: 30%">{{this.noDataMessage}}</p>
+                                                                            <nvd3 [options]="options1" [data]="data1"></nvd3>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col col-md-4">
+                                                                        <div class="graph-area">
+                                                                            <div class="loader-circle w-100 h-100"
+                                                                                *ngIf="showGraphLoader2"></div>
+                                                                            <p *ngIf="charDataNotFound2" class="w-100 text-center"
+                                                                                style="margin-top: 30%">{{this.noDataMessage}}</p>
+                                                                            <nvd3 [options]="options2" [data]="data2"></nvd3>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col col-md-4">
+                                                                        <div class="graph-area">
+                                                                            <div class="loader-circle w-100 h-100"
+                                                                                *ngIf="showGraphLoader3"></div>
+                                                                            <p *ngIf="charDataNotFound3" class="w-100 text-center"
+                                                                                style="margin-top: 30%">{{this.noDataMessage}}</p>
+                                                                            <nvd3 [options]="options3" [data]="data3"></nvd3>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <table class="table table-bordered additional-table">
+                                                                    <caption>Additional Details</caption>
+                                                                    <tr>
+                                                                        <td>Path of Data</td>
+                                                                        <td>{{rawData.dataPath}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Row Count</td>
+                                                                        <td>{{rawData.rowCount}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Dataset Size</td>
+                                                                        <td>{{rawData.size}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Creation Date</td>
+                                                                        <td>{{rawData.createDate}}</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#landing-area"></span>
+                                Landing
+                            </h4>
+                        </div>
+                        <div id="landing-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="landing-accordion">
+                                    <div class="panel panel-default" *ngFor="let landingData of landingStagingData;let i=index;">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <span class="icon maximize-plus" data-parent="#landing-accordion"
+                                                    data-toggle="collapse" [attr.data-target]="'#landing-area-'+landingData.tblName+'-'+landingData.level"
+                                                    (click)="fetchLandingColumnData(landingData.tblName,landingData.level,i);"></span>
+                                                {{landingData.tblName}}
+                                            </h4>
+                                            <select (change)="setUserGroup(landingData.tblName,$event.target.value,'landing');">
+                                                <option *ngFor="let userGroup of landingData.userGroups" value="userGroup">{{userGroup}}</option>
+                                            </select>
+                                        </div>
+                                        <div id="landing-area-{{landingData.tblName}}-{{landingData.level}}"
+                                            data-parent="#landing-accordion" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <div class="panel-group" id="landing-accordion-{{landingData.tblName}}-{{landingData.level}}">
+                                                    <div class="col-md-12 position-absolute" *ngIf="showRawLoader">
+                                                        <div class="loader-circle"></div>
+                                                    </div>
+                                                    <div class="panel panel-default" *ngFor="let column of landingData.Columns">
+                                                        <div class="row panel-heading">
+                                                            <h4 class="col-md-4 panel-title">
+                                                                <span class="icon maximize-up" [attr.data-parent]="'#landing-accordion-'+landingData.tblName+'-'+landingData.level"
+                                                                    data-toggle="collapse" [attr.data-target]="'#landing-area-total-'+landingData.tblName+'-'+landingData.level+'-'+column.COLUMN_NAME"
+                                                                    (click)="loadGraph(landingData.tblName,landingData.level,column.COLUMN_NAME,i);"></span>
+                                                                {{column.COLUMN_NAME}}
+                                                            </h4>
+                                                            <label class="col-md-2">Null:
+                                                                <span>{{column.nullPercent}}</span>
+                                                            </label>
+                                                            <label class="col-md-4">Sample:
+                                                                <span>{{column.sampledata}}</span>
+                                                            </label>
+                                                            <div class="data">
+                                                                <p>Data Type : {{column.TYPE_NAME}}</p>
+                                                                <p>Is Nullable: {{column.IS_NULLABLE}}</p>
+                                                                <p>Column size :{{column.COLUMN_SIZE}}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div id="landing-area-total-{{landingData.tblName}}-{{landingData.level}}-{{column.COLUMN_NAME}}"
+                                                            [attr.data-parent]="'#landing-accordion-'+landingData.tblName+'-'+landingData.level"
+                                                            class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <div class="row graph-wrapper">
+                                                                    <div class="col col-md-4">
+                                                                        <div class="graph-area">
+                                                                            <div class="loader-circle w-100 h-100"
+                                                                                *ngIf="showGraphLoader1"></div>
+                                                                            <p *ngIf="charDataNotFound1" class="w-100 text-center"
+                                                                                style="margin-top: 30%">{{this.noDataMessage}}</p>
+                                                                            <nvd3 [options]="options1" [data]="data1"></nvd3>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col col-md-4">
+                                                                        <div class="graph-area">
+                                                                            <div class="loader-circle w-100 h-100"
+                                                                                *ngIf="showGraphLoader2"></div>
+                                                                            <p *ngIf="charDataNotFound2" class="w-100 text-center"
+                                                                                style="margin-top: 30%">{{this.noDataMessage}}</p>
+                                                                            <nvd3 [options]="options2" [data]="data2"></nvd3>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col col-md-4">
+                                                                        <div class="graph-area">
+                                                                            <div class="loader-circle w-100 h-100"
+                                                                                *ngIf="showGraphLoader3"></div>
+                                                                            <p *ngIf="charDataNotFound3" class="w-100 text-center"
+                                                                                style="margin-top: 30%">{{this.noDataMessage}}</p>
+                                                                            <nvd3 [options]="options3" [data]="data3"></nvd3>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <table class="table table-bordered additional-table">
+                                                                    <caption>Additional Details</caption>
+                                                                    <tr>
+                                                                        <td>Path of Data</td>
+                                                                        <td>{{landingData.dataPath}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Row Count</td>
+                                                                        <td>{{landingData.rowCount}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Dataset Size</td>
+                                                                        <td>{{landingData.size}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Creation Date</td>
+                                                                        <td>{{landingData.createDate}}</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="icon maximize" data-parent="#accordion" data-toggle="collapse" href="#processed-area"></span>
+                                Processed
+                            </h4>
+                        </div>
+                        <div id="processed-area" data-parent="#accordion" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="processed-accordion">
+                                    <div class="panel panel-default" *ngFor="let processedData of processedStagingData;let i=index;">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <span class="icon maximize-plus" data-parent="#processed-accordion"
+                                                    data-toggle="collapse" [attr.data-target]="'#processed-area-'+processedData.tblName+'-'+processedData.level"
+                                                    (click)="fetchProcessedColumnData(processedData.tblName,processedData.level,i);"></span>
+                                                {{processedData.tblName}}
+                                            </h4>
+                                            <select (change)="setUserGroup(processedData.tblName,$event.target.value,'processed');">
+                                                <option *ngFor="let userGroup of processedData.userGroups" value="userGroup">{{userGroup}}</option>
+                                            </select>
+                                        </div>
+                                        <div id="processed-area-{{processedData.tblName}}-{{processedData.level}}"
+                                            data-parent="#processed-accordion" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <div class="panel-group" id="processed-accordion-{{processedData.tblName}}-{{processedData.level}}">
+                                                    <div class="col-md-12 position-absolute" *ngIf="showRawLoader">
+                                                        <div class="loader-circle"></div>
+                                                    </div>
+                                                    <div class="panel panel-default" *ngFor="let column of processedData.Columns">
+                                                        <div class="row panel-heading">
+                                                            <h4 class="col-md-4 panel-title">
+                                                                <span class="icon maximize-up" [attr.data-parent]="'#processed-accordion-'+processedData.tblName+'-'+processedData.level"
+                                                                    data-toggle="collapse" [attr.data-target]="'#processed-area-total-'+processedData.tblName+'-'+processedData.level+'-'+column.COLUMN_NAME"
+                                                                    (click)="loadGraph(processedData.tblName,processedData.level,column.COLUMN_NAME,i);"></span>
+                                                                {{column.COLUMN_NAME}}
+                                                            </h4>
+                                                            <label class="col-md-2">Null:
+                                                                <span>{{column.nullPercent}}</span>
+                                                            </label>
+                                                            <label class="col-md-4">Sample:
+                                                                <span>{{column.sampledata}}</span>
+                                                            </label>
+                                                            <div class="data">
+                                                                <p>Data Type : {{column.TYPE_NAME}}</p>
+                                                                <p>Is Nullable: {{column.IS_NULLABLE}}</p>
+                                                                <p>Column size :{{column.COLUMN_SIZE}}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div id="processed-area-total-{{processedData.tblName}}-{{processedData.level}}-{{column.COLUMN_NAME}}"
+                                                            [attr.data-parent]="'#processed-accordion-'+processedData.tblName+'-'+processedData.level"
+                                                            class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <div class="row graph-wrapper">
+                                                                    <div class="col col-md-4">
+                                                                        <div class="graph-area">
+                                                                            <div class="loader-circle w-100 h-100"
+                                                                                *ngIf="showGraphLoader1"></div>
+                                                                            <p *ngIf="charDataNotFound1" class="w-100 text-center"
+                                                                                style="margin-top: 30%">{{this.noDataMessage}}</p>
+                                                                            <nvd3 [options]="options1" [data]="data1"></nvd3>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col col-md-4">
+                                                                        <div class="graph-area">
+                                                                            <div class="loader-circle w-100 h-100"
+                                                                                *ngIf="showGraphLoader2"></div>
+                                                                            <p *ngIf="charDataNotFound2" class="w-100 text-center"
+                                                                                style="margin-top: 30%">{{this.noDataMessage}}</p>
+                                                                            <nvd3 [options]="options2" [data]="data2"></nvd3>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col col-md-4">
+                                                                        <div class="graph-area">
+                                                                            <div class="loader-circle w-100 h-100"
+                                                                                *ngIf="showGraphLoader3"></div>
+                                                                            <p *ngIf="charDataNotFound3" class="w-100 text-center"
+                                                                                style="margin-top: 30%">{{this.noDataMessage}}</p>
+                                                                            <nvd3 [options]="options3" [data]="data3"></nvd3>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <table class="table table-bordered additional-table">
+                                                                    <caption>Additional Details</caption>
+                                                                    <tr>
+                                                                        <td>Path of Data</td>
+                                                                        <td>{{processedData.dataPath}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Row Count</td>
+                                                                        <td>{{processedData.rowCount}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Dataset Size</td>
+                                                                        <td>{{processedData.size}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Creation Date</td>
+                                                                        <td>{{processedData.createDate}}</td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

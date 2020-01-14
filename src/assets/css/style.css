@@ -1,0 +1,79 @@
+.DataBlock {
+    display: inline-block;
+    width: 391px;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    padding: 5px 0;
+    margin: 0px 0px 0px -5px;
+}
+.DataContent {
+    display: inline-block;
+    width: 230px;
+}
+.DataIcon {
+    display: inline-block;
+    margin: 0 10px 0 15px;
+    width: 100px;
+    text-align: center;
+    vertical-align: text-bottom;
+}
+.DataContent h2 {
+    font-size: 17px;
+    text-transform: uppercase;
+    margin: 12px 0px 12px 0px;
+    font-family: "Myriad Bold";
+}
+.DataContent p {
+    font-size: 13px;
+    line-height: 16px;
+    margin-bottom: 0px;
+    color: #666666;
+}
+.mBIDS, .DataLineage {
+    border-right:none;
+}
+.DataLineage, .DataWrangling, .DataIngestion {
+    border-bottom:none;
+}
+/* .DataContainer {
+    height:205px;
+    width: 1190px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0px 1px 5px 2px rgba(0,0,0,0.19);
+    padding: 0px 8px 25px 16px; 
+    position: relative;   
+} */
+
+.DataContainer {
+    height: 236px;
+    width: 1190px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0px 1px 5px 2px rgba(0,0,0,0.19);
+    padding: 28px 8px 28px 16px;
+    position: relative;
+}
+.DataContentmBIDS {
+    display: inline-block;
+    width: 230px;
+}
+
+.DataContentmBIDS h2 {
+    font-size: 17px;
+    margin: 12px 0px 12px 0px;
+    font-family: "Myriad Bold";
+}
+.DataContentmBIDS p {
+    font-size: 13px;
+    line-height: 16px;
+    margin-bottom: 0px;
+    color: #666666;
+}
+.DataContentmBIDS.mBIDS h2 {
+    font-size: 17px;
+    margin: 12px 0px 12px 0px;
+    font-family: "Myriad Bold";
+}

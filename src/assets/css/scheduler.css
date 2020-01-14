@@ -1,0 +1,244 @@
+main.container-wrapper {
+	padding-left: 0px;
+	padding-right: 0px;
+	color: #000;
+}
+main.container-wrapper .main-header-wrapper {
+	padding: 5px 25px;
+	border-bottom: 1px solid rgba(160, 160, 160, 0.5);
+	background-color: rgba(204, 204, 204, 0.1);
+}
+main.container-wrapper .main-header-wrapper span.header-text {
+	font-size: 22px;
+	color: #000000;
+	font-family: "Myriad Pro";
+	text-transform: uppercase;
+}
+main.container-wrapper #content-wrapper {
+	display: flex;
+}
+
+.right-part .container{
+	padding: 15px;
+}
+
+.right-part .table td, .table th {
+    
+	border-top: 0px !important;
+}
+.right-part table.schedulerlist-table  {
+	font-size: 13px;
+}
+.right-part table.schedulerlist-table thead {
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 13px;
+	color: rgb(78, 132, 196);
+	/* background-color: rgba(108, 207, 246, 0.1); */
+	border: 1px solid rgba(108, 207, 246, 0.7);
+}
+
+.right-part table.schedulerlist-table thead tr th {
+	height: 30px;
+	width:155px;
+	font-family: "Myriad Bold";
+}
+
+
+.right-part table.schedulerlist-table {
+	text-align: center;
+	
+}
+
+.right-part table.schedulerlist-table thead tr th,
+.right-part table.schedulerlist-table tbody tr td{
+	padding: 5px;
+}
+
+.right-part table.schedulerlist-table thead tr th:nth-child(1),
+.right-part table.schedulerlist-table tbody tr td:nth-child(1){
+	width:60px;
+	/* margin-left: .1rem; */
+}
+
+
+.right-part table.schedulerlist-table thead tr th:nth-child(2),
+.right-part table.schedulerlist-table tbody tr td:nth-child(2){
+	width:150px;
+	
+}
+
+.right-part table.schedulerlist-table tbody tr td:nth-child(1),.right-part table.schedulerlist-table tbody tr td:nth-child(2){
+	/* text-align: left; */
+}
+
+.right-part table.schedulerlist-table thead tr {
+    display: block;
+}
+
+.right-part table.schedulerlist-table tbody tr td {
+   width:155px;
+	border-bottom: 1px solid #ccc;
+	color: #000000;
+	vertical-align: middle;
+}
+.right-part table.schedulerlist-table tbody {
+    display: block;
+    overflow: auto;
+    height: 450px;
+    width:100%;
+ }
+
+ a,
+ a:hover,
+a:active {
+    color:#338bb8 !important;
+    text-decoration: none;
+}
+
+.left-part table.table-view, .left-part .OptionsList table.scheduler  {
+	font-size: 12px; 
+	margin-bottom: 0px !important;	
+}
+.left-part table.table-view{
+	margin-top: 0.5rem;
+}
+
+.left-part table td{
+border : 0px !important;
+padding: 0.1rem !important;
+vertical-align: middle !important;
+}
+
+.left-part table.table-view tbody tr td:first-child {
+	width: 30px;
+}
+
+.left-part .timeselectwindow .OptionsList table.scheduler tbody tr td:first-child {
+	width: 170px;
+}
+
+.left-part .timeselectwindow .OptionsList table.scheduler tbody tr td:nth-child(2) {
+	width: 50px;
+}
+
+.left-part #scheduleBtn,.left-part #submitBtn {
+	cursor: pointer;
+    background: #ffffff;
+    margin-top: 15px;
+    height: 35px;
+    
+    color: #338bb8;
+    font-family: Myriad Semi Bold;
+    font-size: 14px;
+}
+
+.Options{
+	margin-top: 0.5rem;
+}
+.Options,.date-wrapper,#schedularName,.custom{
+	margin-left: 10px;
+}
+
+.OptionsList{
+	margin-left: 30px;
+}
+.scheduleAdvanceOpt{
+	width:150px;
+	height:25px;
+	text-align:center;
+	margin-left: .5rem;
+}
+#optionSpan1,#optionSpan2{
+	margin-left: 5px;
+}
+.input-group-text{
+width: 70px;
+}
+.date,#selectdate{
+	padding-left: 5px;
+}
+#schedularName{
+	padding: 3px;
+    font-size: small;
+	margin-bottom: 5px;
+	width: 250px;
+	padding-left: 10px;
+    /* text-align: center; */
+}
+#cronDiv{
+padding: 5px;
+margin-left: 5px;
+}
+
+.left-part{
+	margin-left: 10px;
+    width: 25%;
+    border-style:bold;
+    border-top: none;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    /* padding: 30px 23px 30px 34px; */
+    height: 600px;
+	display: inline-block;
+	box-shadow: 2px 2px 2px #ccc;
+	padding: 9px;
+}
+
+.right-part{
+    width: 75%;
+}
+
+.alert{
+	padding: 0rem 1.25rem;
+}
+
+label{
+	margin-bottom: 0rem;
+}
+.fa{
+	padding-right: 5px;
+}
+.optbtn{
+	margin-right: 5px;
+}
+
+.search-wrapper input {
+    border: none;
+    outline: none;
+    padding: 4px 10px;
+    font-size: 12px;
+    line-height: 20px;
+    opacity: 0.8;
+}
+.search-wrapper button {
+	border: none;
+    background: none;
+    outline: none;
+    padding: 0px 4px;
+}
+
+.search-wrapper  {
+display: inline-block;
+border: 1px solid rgba(77, 77, 77, 0.6);
+}
+
+.joboptions{
+margin-bottom: 15px;
+}
+
+.formClass{
+/* border:1px solid #dc3545; */
+}
+
+.mb-3{
+	margin-bottom: 0.5rem !important;
+}
+
+.left-div2,.left-div1{
+	margin-bottom: 10px;
+}
+
+p{
+	margin-bottom: 0rem!important;
+}

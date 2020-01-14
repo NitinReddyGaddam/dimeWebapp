@@ -1,0 +1,95 @@
+.CodeRepository{
+    width:100%;
+}
+ .CodeRepository .panel-heading span.maximize {
+     background: url(../images/Arrow_down.png) no-repeat;
+     background-position: right;
+     width: 100%;
+     margin-right:0;
+     padding: 10px 0;
+     display: block;
+     height:auto;
+}
+ .CodeRepository .panel-heading span.minimize {
+     background-position: right;
+     width: 100%;
+     margin-right:0;
+     height:auto;
+}
+ .CodeRepository .panel-heading h4.panel-title {
+     display: block;
+     margin:0;
+     line-height: 18px;
+     width: 100%;
+}
+ #TestHive-area a {
+    float:right;
+     color:#007bff;
+}
+ .CodeRepository .panel-body {
+     padding: 22px 0px;
+}
+ .CodeRepository .panel-body ul li {
+     padding:0;
+}
+ .Code-Repository-Right-Section {
+     width: 76%;
+     margin: 0 0 0 4%;
+     display: inline-block;
+}
+ .CodeRepository #accordion {
+     display: inline-block;
+     width: 20%;
+     float: left;
+}
+ .EnterComment textarea {
+    display:block;
+     width: 100%;
+     max-width: 100%;
+     min-width: 100%;
+     height: 108px;
+     min-height: 108px;
+     max-height: 108px;
+     padding: 8px;
+}
+ .EnterComment button {
+     float: right;
+     margin: 20px 0 0 0;
+     border: none;
+     outline: none;
+     padding: 6px 45px;
+     border-radius: 3px;
+     text-transform: uppercase;
+     font-size: 16px;
+     background-color: #4e84c4;
+     border-color: #4e84c4;
+     width: 135px;
+}
+ #TestHive-area ul li:first-child {
+     color:#4e84c4;
+}
+ .CodeRepositoryEditor {
+    height:380px;
+     border:1px solid #ccc;
+     margin:0 0 10px 0;
+}
+ .OkaybtnDiv button {
+     float: right;
+     margin:20px 20px 20px 0;
+     border: none;
+     outline: none;
+     padding: 6px 25px;
+     border-radius: 3px;
+     text-transform: uppercase;
+     font-size: 16px;
+     background-color: #4e84c4;
+     border-color: #4e84c4;
+     width:80px;
+}
+ p.SuccessText {
+    color:green;
+}
+ .PopupContainer {
+    text-align:center;
+     margin: 15px 0 0 0;
+}

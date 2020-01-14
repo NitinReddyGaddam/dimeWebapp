@@ -1,0 +1,92 @@
+@font-face {
+	font-family: "Myriad Bold";
+	src: url('../fonts/MYRIADPRO-BOLD.OTF');
+}
+@font-face {
+	font-family: "Myriad Semi Bold";
+	src: url('../fonts/MYRIADPRO-SEMIBOLD.OTF');
+}
+@font-face {
+	font-family: "Myriad Pro";
+	src: url('../fonts/MyriadPro-Regular.otf');
+}
+
+*{
+     margin: 0;
+     padding: 0;
+}
+body {
+    font-family: "Myriad Pro";
+}
+ul li {
+     list-style:none;
+}
+a,
+a:hover,
+a:active {
+    color:#fff;
+    text-decoration: none;
+}
+
+.dime-container {
+	width:auto;
+	margin:0 auto;
+}
+
+.btn-default:disabled {
+    opacity: 0.2 !important;
+	background:  lightgray!important;
+	color: #231f20 !important;
+}
+
+.btn-primary{
+	font-family: "Myriad Semi Bold" !important;
+}
+
+.btn-primary :disabled{
+	opacity: 0.2 !important;
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #c8c8c8; 
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #c8c8c8; 
+}
+
+
+/* 
+-webkit-scrollbar {
+    height: 18px;
+    width: 10px;
+}
+
+-webkit-scrollbar-button {
+    background-color: #fff;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+-webkit-scrollbar-corner {
+    background-color: #fff;
+}
+-webkit-scrollbar-thumb {
+    border-radius: 9px;
+    border: solid 6px #fff;
+    background-color: #c8c8c8;
+}
+-webkit-scrollbar-track {
+    background-color: #fff;
+} */

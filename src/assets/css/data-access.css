@@ -1,0 +1,149 @@
+section.main-container {
+	min-height: 605px;
+}
+main.container-wrapper {
+	padding-left: 0px;
+	padding-right: 0px;
+	color: #000;
+	margin-bottom: 60px;
+}
+main.container-wrapper .main-header-wrapper {
+	padding: 5px 25px;
+	border-bottom: 1px solid rgba(160, 160, 160, 0.5);
+	background-color: rgba(204, 204, 204, 0.1);
+}
+main.container-wrapper .main-header-wrapper span.header-text {
+	font-size: 22px;
+	color: #000000;
+	font-family: "Myriad Pro";
+	text-transform: uppercase;
+}
+main.container-wrapper .main-header-wrapper button.btn-primary {
+    background-color: #4d84c4;
+    border-color: #4d84c4;
+    border-radius: 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-family: "Myriad Semi Bold";
+    padding: 5px 16px;
+    box-shadow: none !important;
+}
+main.container-wrapper .content-wrapper {
+	padding: 35px 25px 10px;
+	position: relative;
+}
+.content-wrapper .table-accordion-wrapper {
+	padding-right: 5px;
+}
+.content-wrapper .table-accordion-wrapper>.panel-group>.panel-default {
+	border: none;
+	border-bottom: 1px solid #e5e5e5;
+	padding: 4px 0px;
+	margin-top: 0px;
+}
+.panel-group .panel+.panel {
+	margin-top: 0px;
+}
+.table-accordion-wrapper .panel-default>.panel-heading {
+	border-radius: 0;
+	padding: 0;
+}
+.table-accordion-wrapper .panel-default .panel-group .panel-default .panel-heading {
+	padding-bottom: 4px;
+    border-bottom: 1px solid #ccc;
+}
+.table-accordion-wrapper .panel-default .panel-group .panel-default .panel-heading 
+.panel-group .panel-default .panel-heading {
+	display: block;
+}
+.table-accordion-wrapper .panel-default>.panel-heading select {
+	border: 1px solid #ccc;
+    width: 135px;
+    margin-top: 5px;
+    float: right;
+    height: 28px;
+    font-size: 13px;
+}
+.table-accordion-wrapper .panel-default .panel-group .panel-default .panel-heading label {
+	/* margin-left: 100px; */
+	font-family: "Myriad Bold";
+}
+.table-accordion-wrapper .panel-default .panel-group .panel-default .panel-heading label span {
+	font-family: "Myriad Pro";
+}
+.table-accordion-wrapper .panel-default .panel-group .panel-default .panel-heading .data {
+	padding-left: 43px;
+	display: none;
+}
+.table-accordion-wrapper .panel-default .panel-group .panel-default .panel-heading .data p {
+	margin-bottom: 0;
+	font-size: 12px;
+}
+.table-accordion-wrapper .panel-default>.panel-heading.collapsed {
+	background-color: rgba(108, 207, 246, 0.1);
+    border: 1px solid rgba(108, 207, 246, 0.7);
+}
+.table-accordion-wrapper .panel-heading h4.panel-title {
+	display: inline-block;
+    position: relative;
+    margin: 8px 15px;
+    font-size: 16px;
+    font-family: "Myriad Bold";
+    color: #000000;
+}
+.table-accordion-wrapper .panel-heading span.icon {
+	width: 16px;
+	height: 11px;
+	display: inline-block;
+	cursor: pointer;
+	margin-right: 7px;
+}
+.table-accordion-wrapper .panel-heading span.maximize {
+	background: url('../images/Arrow_down.png') no-repeat;
+}
+.table-accordion-wrapper .panel-heading span.minimize {
+	background: url('../images/Arrow_up.png') no-repeat;
+}
+.table-accordion-wrapper .panel-heading span.maximize-plus {
+	background: url('../images/Expand.png') no-repeat;
+}
+.table-accordion-wrapper .panel-heading span.minimize-minus {
+	background: url('../images/Collapse.png') no-repeat;
+	vertical-align: bottom;
+}
+.table-accordion-wrapper .panel-heading span.maximize-up {
+	background: url('../images/arrow1_down.png') no-repeat;
+	vertical-align: middle;
+}
+.table-accordion-wrapper .panel-heading span.minimize-down {
+	background: url('../images/arrow1_up.png') no-repeat;
+	vertical-align: middle;
+}
+.table-accordion-wrapper .panel-body {
+	padding: 22px 38px;
+	border-top: none !important;
+}
+.table-accordion-wrapper .graph-wrapper .graph-area {
+	height: 300px;
+    border: 1px solid #ccc;
+}
+table.additional-table {
+	font-size: 14px;
+	margin-top: 30px;
+}
+table.additional-table caption {
+	caption-side: top;
+	font-family: "Myriad Bold";
+    color: #000000;
+    font-size: 16px;
+}
+table.additional-table tr td:first-child {
+	width: 50%;
+}
+
+.usrGrpErrFeedaback{
+	width: 100%;
+margin-top: .25rem;
+font-size: 80%;
+color: #dc3545;
+}

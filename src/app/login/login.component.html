@@ -1,0 +1,25 @@
+<div class="LoginContainer">
+    <div class="LoginBox">
+        <!-- DIME Logo start-->
+        <div class="DimeLogo">
+            <img src="../../assets/images/Logo_for_whitebg2.png" style="height:50px;">
+        </div>
+        <!-- DIME Logo end-->
+        <!-- Form Section start-->
+        <form id="loginForm" class="LoginForm" [formGroup]="loginForm" (ngSubmit)="submitLoginForm(loginForm.value)">
+            <input type="text" placeholder="Username" id="DimeUsername" name="Name" formControlName="Name" />
+            <input type="password" placeholder="Password" id="DimePassword" name="Password" formControlName="Password" />
+            <div class="Remember_Password">
+                <label class="checkbox-container">Remember me
+                    <input type="checkbox" name="RememberMe" formControlName="RememberMe">
+                    <span class="checkmark"></span>
+                </label>
+                <!-- <input type="checkbox"><span class="RememberMe">Remember me</span></input> -->
+                <a class="ForgotPassword" href="#">Forgot Password?</a>
+            </div>
+            <!-- <p class="error" *ngIf="errorMsg != ''">{{errorMsg}}</p> -->
+            <button type="submit" class="LoginBtn">LOGIN</button>
+        </form>
+        <!-- Form Section end-->
+    </div>
+</div>

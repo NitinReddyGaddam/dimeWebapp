@@ -1,0 +1,36 @@
+<main class="container-fluid container-wrapper">
+  <section class="main-container">
+    <div class="main-header-wrapper">
+      <span class="header-text">Aggregate Level Prediction</span>
+      <div class="select-wrapper float-right" style="width: 500px;">
+        <select name="select-col" style="width: 45%;margin-right: 10px;padding: .3rem" (change)="selectModel($event.target.value)">
+          <option value="" hidden>Select Model to Predict </option>
+          <option *ngFor="let model of modelList" value="{{ model.columnName }}">{{ model.columnName }} </option>
+        </select>
+        <select name="select-col" style="width: 35%;margin-right: 10px;padding: .3rem" (change)="selectMonth($event.target.value)">
+          <option value="" hidden>Months to Predict </option>
+          <option  value="1">1 </option>
+          <option  value="2">2 </option>
+          <option  value="3">3 </option>
+        </select>
+       
+        <button style="width: 15%" type="submit" class="btn predict-btn" (click)="getPredData()">Predict</button>
+      </div>
+      
+    </div>
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-md-12 position-absolute" *ngIf="showLoader">
+          <div class="loader-circle" style="height:350px"></div>
+        </div>
+        <div class="col-md-12 position-absolute bar-loc">
+            <div  *ngIf="selectedMonth==1">Prediction for {{selectedMonth}} month</div>
+            <div  *ngIf="selectedMonth>1">Prediction for {{selectedMonth}} months</div>
+            <nvd3 [options]="options" [data]="data"></nvd3>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>

@@ -1,0 +1,42 @@
+.BannerImg {
+	background-image: url('../images/Banner_3.png');
+    height: 390px;
+    width: 100%;
+    min-width: 1280px;
+    background-size: 100%;
+    text-align: center;
+    position:relative;
+}
+/* #DataSection {
+    margin-top:-69px;
+    margin-bottom: 0px;
+    background-color: lightgrey;
+} */
+
+#DataSection {
+    margin-top: -60px;
+    margin-bottom: 0px;
+}
+.banner-wrapper {
+    position: relative;
+    top: 110px;
+}
+.banner-title {
+	color: white;
+    font-size: 50px;
+    border-bottom: 4px solid #6ccff6;
+}
+.banner-wrapper p.banner-subtitle {
+	color: white;
+	display: inline-block;
+    width: 800px;
+    font-size: 18px;
+}
+#homepage {
+    min-height:664px;
+    background-color: #d3d3d333;
+}
+
+@media screen and (max-width:1024px) {
+    
+}

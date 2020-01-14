@@ -1,0 +1,45 @@
+<main class="container-fluid container-wrapper">
+  <section class="main-container">
+      <div class="main-header-wrapper">
+          <span class="header-text">ADAS Visualization</span>
+      </div>
+    <div id=content-wrapper>
+      <div id="sidebar-left">    
+          <div id="sidebar">
+            <div class="date-wrapper">
+              <span style="margin-left:20px">Please select date</span>
+              <input type="text" name="Date" id="Date" required [(ngModel)]="date" />
+              <button type="button" class="date-icon">
+                <img src="../../assets/images/calendar.png" style="height: 26px;"/>
+              </button>
+            </div>
+            <br>
+            <br>
+            <span style="margin-left:20px">Please select time range</span>
+            <br>
+            <br>
+            <div id="sliderDiv">
+              <nouislider #slider [config]="someKeyboardConfig" [(ngModel)]="sliderRange"></nouislider>
+            </div>
+            <button class="btn btn-primary btn-lg" (click)="fetchVideos()">Submit</button>
+        </div>
+      </div>
+      <div id="main">
+        <div id="display" *ngFor="let vid of finalMediaList; let i = index;">
+          <div id="video-{{vid.jsonFilename}}" *ngIf="vid.fetchvid">
+            <video width="400px" controls>
+              <source [src]="vid.vidUrl" type="video/mp4">
+            </video>
+            <br>
+            <span class="videoDesc"> {{vid.epoachStartTime}}</span>
+          </div>
+          <div id="img-{{vid.jsonFilename}}" *ngIf="vid.fetchimg" (click)="toggleMedia(i)">
+            <img [src]="vid.imgUrl" width="400px">
+            <br>
+            <span class="videoDesc"> {{vid.epoachStartTime}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

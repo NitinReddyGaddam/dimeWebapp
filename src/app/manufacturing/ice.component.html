@@ -1,0 +1,58 @@
+<main class="container-fluid container-wrapper">
+    <section class="main-container">
+        <div class="main-header-wrapper">
+            <span class="header-text" id="actualHeader">{{headings}}</span>
+        </div>
+        <div class="content-wrapper">
+
+            <!-- mbids diagrams start-->
+            <div id="Architecture_Diagram_mBIDS">
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img [src]="imageSrc" alt="Logo" style="height:350px;" (click)="openPopup()">
+                            <!-- <img id="zoom_01" src='../../assets/images/image3_small.png' data-zoom-image='../../assets/images/image3_large.jpg' /> -->
+                        </div>
+                        <button class="btn btn-primary btn-lg " style="font-size:15px;">Create DataModel &
+                            KPI's
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- mbids diagrams start-->
+
+            <div id="myModal" class="modal fade modal-popup mbds-popup" data-backdrop="static" role="dialog" style="overflow-x: auto;
+            overflow-y: auto;padding-left:0px;">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span class="close" data-dismiss="modal" (click)="closeMyModal()">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <img [src]="imageSrc" alt="Logo">
+                            <!-- <img id="zoom_01" src="../../assets/images/image3_small.png" data-zoom-image="../../assets/images/image3_large.jpg" 
+                                alt="logo" /> -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <img id="zoom_01" src='../../assets/images/image3_small.png' data-zoom-image='../../assets/images/image3_large.jpg' /> -->
+
+            <!-- IPCandHelp starts here-->
+            <div id="IPCandHelp">
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img [src]="image" alt="Logo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--IPCandHelp ends here-->
+
+        </div>
+    </section>
+</main>

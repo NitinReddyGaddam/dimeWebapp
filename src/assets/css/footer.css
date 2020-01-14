@@ -1,0 +1,31 @@
+footer {
+	text-align: center;
+    /* margin-top: 20px; */
+    font-family: arial;
+    border-top: 1px solid #ccc;
+    box-sizing: border-box;
+    width: 100%;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 0px 22px;
+    min-width: 1280px;
+    /* position: absolute;
+    bottom:0px; */
+
+      
+   
+    
+}
+ #TataLogo {
+    float:right;
+}
+ #TcsName {
+    float:left;
+}
+ footer span {
+	text-align: center;
+    width: 100%;
+    font-size: 10px;
+    color: #4d4d4d;
+}

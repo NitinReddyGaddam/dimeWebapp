@@ -1,0 +1,108 @@
+<main class="container-fluid container-wrapper">
+    <section class="main-container">
+        <div class="main-header-wrapper">
+            <span class="header-text">visualization</span>
+        </div>
+        <div class="content-wrapper">
+            <div class="left-wrapper">
+                <div class="select-wrapper">
+                    <select id="sel-box" name="table-type" (change)="selectColumns($event.target.value)">
+                        <option value="" hidden>Select Table </option>
+                        <option *ngFor="let tbl of tblLevelList" [value]="tbl.tblName+'+'+tbl.level">{{tbl.tblName}} </option>
+                    </select>
+                </div>
+                <div class="column-list" *ngFor="let col of colList;">
+                    <ng-container *ngIf="col.dataType == 'varchar'  || col.dataType == 'date' ||  col.dataType == 'timestamp' || col.dataType == 'String'; then selectedDatatypes; else otherDatatypes">
+                    </ng-container>
+
+                    <ng-template #selectedDatatypes>
+                        <div class="y" id="colDiv-{{col.columnName}}" draggable="true" (dragstart)="drag($event)">{{col.columnName}}</div>
+
+                    </ng-template>
+                    <ng-template #otherDatatypes>
+                        <div class="x" id="colDiv-{{col.columnName}}" draggable="true" (dragstart)="drag($event)">{{col.columnName}}</div>
+
+                    </ng-template>
+
+                </div>
+            </div>
+            <div class="right-wrapper">
+                <div class="right-upper-wrapper row">
+                    <div class="column-selection-wrapper col col-md-4">
+                        <div class="column-selection" id="x-col-selection" (drop)="drop($event)" (dragover)="allowDrop($event)">
+                            <label>X</label>
+                            <div class="col-tags">
+                                <div class="cols" *ngFor="let col of xcolArr">
+                                    <li class="y">{{col}} </li>
+                                    <span class="col-close" (click)="removeItem('X', col)"></span>
+                                </div>
+                            </div>
+                            <div *ngIf="xColErrMsg" id="invalidFeedback">Please select one Column</div>
+                            <div *ngIf="xColMultiBarErrMsg" id="invalidFeedback">Please select the two columns for
+                                MultiBar Chart</div>
+                        </div>
+
+                        <div class="column-selection" id="y-col-selection" (drop)="drop($event)" (dragover)="allowDrop($event)">
+                            <label>Y</label>
+                            <div class="col-tags">
+                                <div class="cols" *ngFor="let col of ycolArr">
+                                    <li class="x">{{col}}</li>
+                                    <span class="col-close" (click)="removeItem('Y', col)"></span>
+                                </div>
+                            </div>
+                            <div *ngIf="yColErrMsg" id="invalidFeedback">Please select the column Y</div>
+                        </div>
+
+
+                        <select class="aggregate-select" name="aggregationtype" (change)="selectAggregation($event.target.value)"
+                            required>
+                            <option value="">Select Aggregation</option>
+                            <option value="Sum">Sum</option>
+                            <option value="Average">Average</option>
+                            <option value="Count">Count</option>
+                            <option value="Min">Min</option>
+                            <option value="Max">Max</option>
+                        </select>
+                        <div *ngIf="aggreagtionErrMsg" id="invalidFeedback">Please select the aggregation type</div>
+
+                    </div>
+                    <div class="chart-selection-wrapper col col-md-7">
+                        <label>Select Chart</label>
+                        <div class="radio-option-wrapper">
+                            <label class="container">
+                                <img src="../../assets/images/graph.png" class="radio-icon" />
+                                <input type="radio" checked="checked" value="discreteBarChart" name="chart-type"
+                                    (change)="chartType($event.target.value)" required>
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="container">
+                                <img src="../../assets/images/pie-chart.png" class="radio-icon" />
+                                <input type="radio" name="chart-type" value="pieChart" (change)="chartType($event.target.value)"
+                                    required>
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="container">
+                                <img src="../../assets/images/bar_chart.png" class="radio-icon" />
+                                <input type="radio" name="chart-type" value="multiBarChart" (change)="chartType($event.target.value)"
+                                    required>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="btn-wrapper col col-md-1">
+                        <button type="submit" class="btn btn-primary btn-sm publish-btn" (click)="validations()">publish</button>
+                    </div>
+                </div>
+                <div class="right-lower-wrapper">
+                    <!-- <p>Visualization will go here</p> -->
+
+                    <!-- <div id="chart"></div> -->
+                    <div>
+                        <nvd3 [options]="options" [data]="data"></nvd3>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

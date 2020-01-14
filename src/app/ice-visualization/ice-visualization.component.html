@@ -1,0 +1,173 @@
+<main class="container-fluid container-wrapper">
+  <section class="main-container">
+    <div class="main-header-wrapper">
+      <span class="header-text">IPC Visualization</span>
+      <div class="select-wrapper float-right" style="width: 300px;">
+        <select id="select-col" name="select-col" style="width: 100%" (change)="checkForMatchedWord($event.target.value)">
+          <option value="" hidden>Select Part </option>
+          <option *ngFor="let word of wordList" value="{{ word.columnName }}">{{ word.columnName }} </option>
+        </select>
+      </div>
+    </div>
+    <div class="content-wrapper">
+      <div class={{writeBackStatusCls}} disabled="true">{{writeBackStatus}}</div>
+      <div class="row">
+        <div class="col-md-12 position-absolute" *ngIf="showLoader1 ||showLoader2 ||showLoader3 ||showLoader4 ||         showLoader5 ||
+            showLoader6 || showLoader7">
+          <div class="loader-circle" style="height:350px"></div>
+        </div>
+        <!-- <div class="col-md-12 position-absolute" *ngIf="showLoader6">
+          <div class="loader-horizontal" style="height:80px"></div>
+        </div> -->
+        <div class="col-md-6">
+          <div class="row" id="unspcMathces">
+            <div class="col-md-12">
+              <label class="labelClass" *ngIf="showPie">UNSPC Matches</label>
+              <nvd3 [options]="optionsMain" [data]="data"></nvd3>
+            </div>
+          </div>
+          <div class="row" id="tbl">
+            <div class="col-md-12">
+              <table class="table ice-table" *ngIf="showTable">
+                <thead>
+                  <tr>
+                    <th>Select Title</th>
+                    <th>UNSPC Title</th>
+                    <th>Match Count</th>
+                    <th>Ind. Mat Count</th>
+                    <th>UNSPC Word Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of tblDataLst; let i = index">
+                    <td>
+                      <label class="radio-container">
+                        <input
+                          type="radio"
+                          name="UnspcdWord"
+                          (click)="selectdUnspcTitle(data)"
+                          [value]="data"
+                          required
+                        />
+                        <span class="checkmark"></span>
+                      </label>
+                    </td>
+                    <td>{{ data.unspc_Title }}</td>
+                    <td>{{ data.match_count }}</td>
+                    <td>{{ data.ind_Mat_Count }}</td>
+                    <td>{{ data.unspc_Word_Count }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row" id="segmentMatches">
+            <div class="col-md-12">
+              <label class="labelClass" *ngIf="showSegment"
+                >Segment Matches</label
+              >
+              <nvd3 [options]="segOptions" [data]="segData"></nvd3>
+            </div>
+          </div>
+          <div class="row" id="classMatches">
+            <div class="col-md-12">
+              <label class="labelClass2" *ngIf="showClass">Class Matches</label>
+              <nvd3 [options]="clsOptions" [data]="classData"></nvd3>
+            </div>
+          </div>
+          <div class="row" id="familyMatches">
+            <div class="col-md-12">
+              <label class="labelClass2" *ngIf="showFamily"
+                >Family Matches</label
+              >
+              <nvd3 [options]="famOptions" [data]="familyData"></nvd3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal start -->
+    <div
+      class="modal fade modal-popup file-popup"
+      id="statusModal"
+      data-backdrop="static"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content filepopup-content popup-modal">
+          <div class="modal-header">
+            <span class="close" data-dismiss="modal"></span>
+            <h4 class="modal-title">Word Match Result</h4>
+          </div>
+          <div class="modal-body">
+            <span class="file-name">{{ matchedUnspcData.statusInfo }}</span>
+            <table class="table ice-modal-table" *ngIf="showMatchedData">
+              <!-- <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Description </th>
+                </tr>
+              </thead> -->
+              <tbody>
+                <!-- <tr>
+                  <td>Word</td>
+                  <td>{{ matchedUnspcData.word }}</td>
+                </tr> -->
+                <tr>
+                  <td>UNSPC Title</td>
+                  <td>{{ matchedUnspcData.unspcTitle }}</td>
+                </tr>
+                <tr>
+                  <td>Segment</td>
+                  <td>{{ matchedUnspcData.segment }}</td>
+                </tr>
+                <tr>
+                  <td>Class</td>
+                  <td>{{ matchedUnspcData.cls }}</td>
+                </tr>
+
+                <tr>
+                  <td>Family</td>
+                  <td>{{ matchedUnspcData.family }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <span class="file-name2" *ngIf="showMatchedData"
+              >Do you want to proceed with changing the selection?</span
+            >
+            <div class="button-wrapper" *ngIf="showMatchedData">
+              <button
+                class="btn btn-primary btn-sm"
+                (click)="changeSelection()"
+              >
+                Change
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal end -->
+
+        <!--Writeback Status Modal start -->
+        <div
+        class="modal fade modal-popup file-popup"
+        id="writebackStatusModal"
+        data-backdrop="static"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content filepopup-content popup-modal">
+            <div class="modal-header">
+              <span class="close" data-dismiss="modal"></span>
+              <h4 class="modal-title">{{writeBackStatus}}</h4>
+            </div>
+            <!-- <div class="modal-body">
+              <span class="file-name"> matchedUnspcData.statusInfo </span>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <!--Writeback Status Modal end -->
+  </section>
+</main>

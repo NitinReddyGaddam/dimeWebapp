@@ -1,0 +1,1200 @@
+<main class="container-fluid container-wrapper">
+    <section class="main-container">
+        <div class="main-header-wrapper">
+            <span class="header-text" id="flow-comments">{{flowComments}}</span>
+            <button class="btn btn-primary btn-lg float-right" style="opacity: 20; background-color: #4d84c4;font-family: 'Myriad Semi Bold' !important;color: #ffffff;"
+                (click)="tableView()" data-toggle="modal" data-target="#tableViewPopup">Table View</button>
+            <button class="btn btn-primary btn-lg float-right" style="opacity: 20; background-color: #4d84c4;font-family: 'Myriad Semi Bold' !important;color: #ffffff;"
+                (click)="quickWrangleOpen()" data-toggle="modal">Quick Wrangle</button>
+        </div>
+        <div class="main-header-wrapper2" style="display: none">
+            <span class="header-text">Quick Wrangle</span>
+            <!-- <button (click)="openWranglePreview()">third window</button> -->
+            <span class="close" (click)=quickWrangleClose()>
+            </span>
+        </div>
+        <div class="content-wrapper">
+            <div class="lineage-wrapper">
+                <select class="node-select" name="node-type">
+                    <option value="">Select</option>
+                    <option value="SQL">SQL</option>
+                    <option value="JAVA">JAVA</option>
+                    <option value="PYSPARK">PYSPARK</option>
+                    <option value="HIVE">HIVE</option>
+                    <option value="FILE">FILE</option>
+                </select>
+                <span class="copy-pipeline-btn" data-target="#copyPipeline" data-toggle="modal">copy pipeline</span>
+                <div class="lineage-btn-wrapper">
+                    <div class="zoom-btn-wrapper">
+                        <span id="zoom-in" class="lineage-icon zoom-in zoom-btn"></span>
+                        <span id="zoom-out" class="lineage-icon zoom-out zoom-btn"></span>
+                    </div>
+                    <span id="re-center" class="lineage-icon re-center recenter"></span>
+                    <!-- <span class="lineage-icon panning"></span> -->
+                </div>
+
+                <!-- <div *ngFor="let each of divGraphNameList" id="{{each}}"></div> -->
+                <div class="col-md-12 position-absolute" *ngIf="showLoader">
+                    <div class="loader-circle"></div>
+                </div>
+                <div id="lineage-diagram"></div>
+                <!-- <div  id="lineage-diagram0"></div> -->
+
+            </div>
+
+            <div class="datascript-wrapper">
+                <div class="data-navigation">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link " data-toggle="tab" (click)="fetchMetadata()" href="#metadata">Metadata</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" (click)="fetchScript(false)" href="#script">Script</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " data-toggle="tab" (click)="fetchPreviewdata()" href="#dataexport">Preview/Cleanse
+                                Data
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="float-right icon-wrapper">
+                        <span class="icon-btn minimize" (click)="windowButton($event)"></span>
+                        <span class="icon-btn maximize" (click)="windowButton($event)"></span>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <!--metadata start -->
+                    <div id="metadata" class="container tab-pane fade">
+                        <table class="table metadata-table">
+                            <thead>
+                                <tr>
+                                    <th>column name</th>
+                                    <th>data type</th>
+                                    <th>is nullable</th>
+                                    <th>column size</th>
+                                    <th>null %</th>
+                                    <th>sample</th>
+                                    <th>type</th>
+                                    <th>column size</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr *ngIf="showMetaDataLoader">
+                                    <td colspan="8" class="position-absolute w-100">
+                                        <div class="loader-circle" style="height: 100px"></div>
+                                    </td>
+                                </tr>
+
+                                <ng-container *ngFor="let data of metadataList">
+                                    <tr>
+                                        <td>{{data.COLUMN_NAME}}</td>
+                                        <td>{{data.TYPE_NAME}}</td>
+                                        <td>{{data.IS_NULLABLE}}</td>
+                                        <td>{{data.COLUMN_SIZE}}</td>
+                                        <td>{{data.nullPercent}}</td>
+                                        <td>{{data.sampledata}}</td>
+                                        <td>{{data.TYPE_NAME}}</td>
+                                        <td>{{data.COLUMN_SIZE}}</td>
+                                    </tr>
+                                </ng-container>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- metadata end -->
+                    <div id="script" class="container script-container tab-pane active">
+                        <div class="script-head hide">
+                            table/node name
+                        </div>
+                        <div class="btn-wrapper">
+                            <button class="btn btn-primary btn-sm edit-btn" (click)="openEditMode($event)">Edit</button>
+                        </div>
+                        <div class="edit-btn-wrapper hide">
+                            <ul>
+                                <li data-toggle="modal" data-target="#runcode">
+                                    <span class="script-icon run"></span>Run</li>
+                                <li data-toggle="modal" data-target="#checkinPopup">
+                                    <span class="script-icon checkin"></span>Save &amp; Checkin</li>
+                                <li>
+                                    <div class="dropdown">
+                                        <a data-toggle="dropdown" href="#">
+                                            <span class="script-icon ham-menu"></span>
+                                        </a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#addFileFolderPopup">Add
+                                                File
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="file-info-wrapper">
+                            <div class="action-wrapper hide">
+                                <div class="select-wrapper">
+                                    <select [(ngModel)]="setFolderName" (change)="captureFolderName($event.target.value)">
+                                        <option hidden>Select Folder</option>
+                                        <option *ngFor="let folder of folderNames">{{folder}}</option>
+                                    </select>
+                                </div>
+                                <div class="search-wrapper">
+                                    <input type="text" [(ngModel)]="searchFile" (keyup)="searchFiles()" placeholder="Search by File Name" />
+                                    <button type="button">
+                                        <img src="../../assets/images/Search.png" />
+                                    </button>
+                                </div>
+                                <ul class="file-list">
+                                    <li (click)="getVersions(filename);" data-toggle="modal" (click)="openFileVersions()"
+                                        *ngFor="let filename of fileNames">{{filename}}</li>
+                                </ul>
+                            </div>
+                            <div class="code-area-wrapper">
+                                <textarea class="code-textarea" id="codeArea1"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- previewdata start-->
+
+                    <div id="dataexport" class="container data-export-container tab-pane fade">
+                        <div class="btn-wrapper">
+                            <button class="btn btn-primary btn-sm edit-btn">Edit</button>
+                            <!-- <button class="btn btn-primary btn-sm export-btn hide" disabled>Export to Excel</button> -->
+                        </div>
+                        <div class="activity-wrapper">
+                            <div class="search-wrapper">
+                                <input type="text" [(ngModel)]="search" (keyup)="searchJobs()" placeholder="Search by Job ID" />
+                                <button type="button">
+                                    <img src="../../assets/images/Search.png" />
+                                </button>
+                            </div>
+                            <div class="right-wrapper float-right">
+                                <div class="data-display-wrapper">
+                                    Showing
+                                    <select [(ngModel)]="displayLimit" (change)="refreshPagination()">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                        <option value="40">40</option>
+                                        <option value="50">50</option>
+                                    </select>
+                                    of {{previewdataCount}} records
+                                </div>
+                                <div class="pagination-wrapper">
+                                    <ul *ngIf="activePager.pages && activePager.pages.length" class="pagination">
+                                        <li>
+                                            <a class="page-icon first-page" [ngClass]="{'disabled':activePager.currentPage === 1, 'active':activePager.currentPage !== 1}"
+                                                (click)="setActivePage(1,paginationLength)">
+                                            </a>
+
+                                        </li>
+                                        <li>
+                                            <a class="page-icon prev-page" [ngClass]="{'disabled':activePager.currentPage === 1, 'active':activePager.currentPage !== 1}"
+                                                (click)="setActivePage(activePager.currentPage - 1,paginationLength)">
+                                            </a>
+
+                                        </li>
+                                        <li *ngFor="let page of activePager.pages" [ngClass]="{active:activePager.currentPage === page}">
+                                            <a href="javascript:void(0);" (click)="setActivePage(page,paginationLength)">{{page}}</a>
+                                        </li>
+
+                                        <li>
+                                            <a class="page-icon next-page" [ngClass]="{'disabled':activePager.currentPage === activePager.totalPages, 'active':activePager.currentPage !== activePager.totalPages}"
+                                                (click)="setActivePage(activePager.currentPage + 1,paginationLength)">
+                                            </a>
+
+                                        </li>
+                                        <li>
+                                            <a class="page-icon last-page" [ngClass]="{'disabled':activePager.currentPage === activePager.totalPages, 'active':activePager.currentPage !== activePager.totalPages}"
+                                                (click)="setActivePage(activePager.totalPages,paginationLength)">
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="find-data-wrapper ">
+                            <div class="action-wrapper find-replace-wrapper hide">
+                                <span class="close-icon float-right " (click)="removeWranglingModals()"></span>
+                                <p class="action-head">Find &amp; Replace</p>
+                                <form #findAndReplaceForm="ngForm" (submit)="findAndReplaceForm.valid && OnFindAndReplaceSubmit()"
+                                    novalidate>
+                                    <div class="w-100 position-relative" *ngIf="showFindAndReplaceLoader">
+                                        <div class="loader-circle position-absolute w-100" style="z-index: 1;"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Current Value</label>
+                                        <input type="text" class="form-control" name="currentValue" id="currentValue"
+                                            [(ngModel)]="findAndReplaceData.currentValue" required (keyup)="validateFindAndReplaceData()" />
+                                        <div class="form-control-feedback text-danger" *ngIf="findAndReplaceForm.submitted && findAndReplaceForm.invalid">
+                                            <p *ngIf="findAndReplaceForm.form.controls.currentValue?.errors?.required">Current
+                                                value is required</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Replace with</label>
+                                        <input type="text" class="form-control" name="replaceWith" id="replaceWith"
+                                            [(ngModel)]="findAndReplaceData.replaceWith" required (keyup)="validateFindAndReplaceData()" />
+                                        <div class="form-control-feedback text-danger" *ngIf="findAndReplaceForm.submitted && findAndReplaceForm.invalid">
+                                            <p *ngIf="findAndReplaceForm.form.controls.replaceWith?.errors?.required">Replace
+                                                value is required</p>
+                                            <p *ngIf="findAndReplaceForm.form.controls.replaceWith?.errors?.bothSame">Current
+                                                and Relace value can not be same</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>New Dataset Name</label>
+                                        <input type="text" class="form-control" name="dataSetName" id="dataSetName"
+                                            [(ngModel)]="findAndReplaceData.dataSetname" required>
+                                        <div class="form-control-feedback text-danger" *ngIf="findAndReplaceForm.submitted && findAndReplaceForm.invalid">
+                                            <p *ngIf="findAndReplaceForm.form.controls.dataSetName?.errors?.required">Data
+                                                set name is required</p>
+                                        </div>
+                                    </div>
+                                    <div class="button-wrapper">
+                                        <div class="form-control-feedback text-danger text-left" *ngIf="findAndReplaceForm.submitted && findAndReplaceData.errorOccured">
+                                            <p>Some unknown error occured</p>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-sm" [disabled]="showFindAndReplaceLoader">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="action-wrapper date-filter-wrapper hide">
+                                <span class="close-icon float-right " (click)="removeWranglingModals()"></span>
+                                <p class="action-head">Date Filter</p>
+                                <form #dateFilterForm="ngForm" (submit)="dateFilterForm.valid && !isToDateBeforeFrom && OnDateFilterSubmit()"
+                                    novalidate>
+                                    <div class="w-100 position-relative" *ngIf="showDateFilterLoader">
+                                        <div class="loader-circle position-absolute w-100" style="z-index: 1;"></div>
+                                    </div>
+                                    <!-- <div class="select-wrapper">
+                                    <select name="file-type">
+                                        <option value="year">year</option>
+                                        <option value="vehicle type">vehicle type</option>
+                                        <option value="code">code</option>
+                                        <option value="code type">code type</option>
+                                        <option value="val">val</option>
+                                    </select>
+                                </div> -->
+                                    <div class="form-group">
+                                        <label>From Date</label>
+                                        <div class="date-wrapper">
+                                            <input type="text" name="fromDate" id="fromDate" name="fromDate" required
+                                                [(ngModel)]="fromDate" />
+                                            <button type="button" class="date-icon">
+                                                <img src="../../assets/images/calendar.png" />
+                                            </button>
+                                        </div>
+                                        <div class="form-control-feedback text-danger" *ngIf="dateFilterForm.submitted && dateFilterForm.invalid">
+                                            <p *ngIf="dateFilterForm.form.controls.fromDate?.errors?.required">From
+                                                Date is required</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>To Date</label>
+                                        <div class="date-wrapper">
+                                            <input type="text" name="toDate" id="toDate" required [(ngModel)]="toDate" />
+                                            <button type="button" class="date-icon">
+                                                <img src="../../assets/images/calendar.png" />
+                                            </button>
+                                        </div>
+                                        <div class="form-control-feedback text-danger" *ngIf="dateFilterForm.submitted && dateFilterForm.invalid">
+                                            <p *ngIf="dateFilterForm.form.controls.toDate?.errors?.required">To Date is
+                                                required
+                                            </p>
+                                        </div>
+                                        <div class="form-control-feedback text-danger" *ngIf="dateFilterForm.submitted ">
+                                            <p *ngIf="isToDateBeforeFrom">To Date must be after from date</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>New Dataset Name</label>
+                                        <input type="text" class="form-control" name="dataSetName" id="dataSetName"
+                                            [(ngModel)]="dateFilterData.dataSetname" required>
+                                        <div class="form-control-feedback text-danger" *ngIf="dateFilterForm.submitted && dateFilterForm.invalid">
+                                            <p *ngIf="dateFilterForm.form.controls.dataSetName?.errors?.required">Data
+                                                set name is required</p>
+                                        </div>
+                                    </div>
+                                    <div class="button-wrapper">
+                                        <div class="form-control-feedback text-danger text-left" *ngIf="dateFilterForm.submitted && dateFilterData.errorOccured">
+                                            <p>Some unknown error occured</p>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-sm" [disabled]="showDateFilterLoader">Run</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- concat column wrapper :: Start -->
+                            <div class="action-wrapper concat-columns-wrapper hide">
+                                <span class="close-icon float-right " (click)="removeWranglingModals()"></span>
+                                <p class="action-head">Concat Columns</p>
+                                <form #concatColumnForm="ngForm" (submit)="concatColumnForm.valid && OnConcatColumnSubmit()">
+                                    <div class="w-100 position-relative" *ngIf="showConcatColumnLoader">
+                                        <div class="loader-circle position-absolute w-100" style="z-index: 1;"></div>
+                                    </div>
+                                    <div class="select-wrapper">
+                                        <select name="file_type" [(ngModel)]="concatColumnData.columnName" required>
+                                            <option *ngFor="let colName of previewTblCol" [ngClass]="{'hidden': colName === selectedColumnName}"
+                                                value="{{colName}}">{{colName}}</option>
+                                        </select>
+                                        <div class="form-control-feedback text-danger" *ngIf="concatColumnForm.submitted && concatColumnForm.invalid">
+                                            <p *ngIf="concatColumnForm.form.controls.file_type?.errors?.required">Please
+                                                select column</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Delimiter to use</label>
+                                        <input type="text" class="form-control" name="delimiter" [(ngModel)]="concatColumnData.delimiter"
+                                            required pattern="^[-_\\,:;|~#@$]$" />
+                                        <div class="form-control-feedback text-danger" *ngIf="concatColumnForm.submitted && concatColumnForm.invalid">
+                                            <p *ngIf="concatColumnForm.form.controls.delimiter?.errors?.required">Delimiter
+                                                is required</p>
+                                            <p *ngIf="concatColumnForm.form.controls.delimiter?.errors?.pattern">Delimiter
+                                                is not valid</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Output Columns</label>
+                                        <input type="text" class="form-control" name="output_column" [(ngModel)]="concatColumnData.outputColumnName"
+                                            required (keyup)="validateConcatColumn()">
+                                        <div class="form-control-feedback text-danger" *ngIf="concatColumnForm.submitted && concatColumnForm.invalid">
+                                            <p *ngIf="concatColumnForm.form.controls.output_column?.errors?.required">Output
+                                                Column is required</p>
+                                            <p *ngIf="concatColumnForm.form.controls.output_column?.errors?.bothSame">Actual
+                                                Column and New column name must be different</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>New Dataset Name</label>
+                                        <input type="text" class="form-control" name="dataSetName" id="dataSetName"
+                                            [(ngModel)]="concatColumnData.dataSetname" required>
+                                        <div class="form-control-feedback text-danger" *ngIf="concatColumnForm.submitted && concatColumnForm.invalid">
+                                            <p *ngIf="concatColumnForm.form.controls.dataSetName?.errors?.required">Data
+                                                set name is required</p>
+                                        </div>
+                                    </div>
+                                    <div class="button-wrapper">
+                                        <div class="form-control-feedback text-danger text-left" *ngIf="concatColumnForm.submitted && concatColumnData.errorOccured">
+                                            <p>Some unknown error occured</p>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm" type="submit" [disabled]="showConcatColumnLoader">Run</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- concat column wrapper :: END -->
+                            <!-- number filter wrapper :: start -->
+                            <div class="action-wrapper number-filter-wrapper hide">
+                                <span class="close-icon float-right " (click)="removeWranglingModals()"></span>
+                                <p class="action-head">Number Filter</p>
+                                <form #numberFilterForm="ngForm" (submit)="numberFilterForm.valid && OnNumberFilterSubmit()">
+                                    <div class="w-100 position-relative" *ngIf="showNumberFilterLoader">
+                                        <div class="loader-circle position-absolute w-100" style="z-index: 1;"></div>
+                                    </div>
+
+                                    <div class="number-range-wrapper">
+                                        <div class="form-group">
+                                            <label>is between</label>
+                                            <input type="number" class="form-control" name="fromNumber" [(ngModel)]="numberFilterData.fromNumber"
+                                                required (keyup)="validateNumberFilter()" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>and</label>
+                                            <input type="number" class="form-control" name="toNumber" [(ngModel)]="numberFilterData.toNumber"
+                                                required (keyup)="validateNumberFilter()" />
+                                        </div>
+                                        <div class="form-control-feedback text-danger" *ngIf="numberFilterForm.submitted && numberFilterForm.invalid">
+                                            <p *ngIf="numberFilterForm.form.controls.fromNumber?.errors?.required">From
+                                                number is required</p>
+                                            <p *ngIf="numberFilterForm.form.controls.toNumber?.errors?.required">To
+                                                number is required</p>
+                                            <p *ngIf="numberFilterForm.form.controls.toNumber?.errors?.moreThanFrom">To
+                                                number must be more than from</p>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>New Dataset Name</label>
+                                        <input type="text" class="form-control" name="dataSetName" id="dataSetName"
+                                            [(ngModel)]="numberFilterData.dataSetname" required>
+                                        <div class="form-control-feedback text-danger" *ngIf="numberFilterForm.submitted && numberFilterForm.invalid">
+                                            <p *ngIf="numberFilterForm.form.controls.dataSetName?.errors?.required">Data
+                                                set name is required</p>
+                                        </div>
+                                    </div>
+                                    <div class="button-wrapper">
+                                        <div class="form-control-feedback text-danger text-left" *ngIf="numberFilterForm.submitted && numberFilterData.errorOccured">
+                                            <p>Some unknown error occured</p>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm" type="submit">Run</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- number filter wrapper :: END -->
+                            <div class="table-wrapper">
+                                <table class="table data-export-table">
+                                    <thead>
+                                        <tr>
+                                            <ng-container *ngFor="let columnNames of previewTblCol">
+
+                                                <th>
+                                                    <div>{{columnNames}}
+                                                        <span class="dropdown-icon " (click)="openWranglingDropdown($event,columnNames)"></span>
+                                                    </div>
+                                                </th>
+
+                                            </ng-container>
+                                        </tr>
+
+
+                                    </thead>
+                                    <tbody>
+
+                                        <tr *ngIf="showPreviewTableLoader">
+                                            <td colspan="20" class="position-absolute w-100">
+                                                <div class="loader-circle" style="height: 100px"></div>
+                                            </td>
+                                        </tr>
+
+                                        <ng-container *ngFor="let eachRow of previewTblData; let i = index;">
+                                            <tr *ngIf="i < displayLimit">
+                                                <td *ngFor="let eachValue of eachRow" style="padding-top: 0.25rem;padding-bottom: 0.25rem">
+                                                    <div>
+                                                        <a (click)="getImage(eachValue);" [ngClass]="{ 'decorateImgLink':decorateLink(eachValue)}">
+                                                            {{eachValue}}
+                                                            <!-- <span [ngClass]="{ 'edit-icon' : !(decorateLink(eachValue)) }"
+                                                            (click)="openColummnEditPopup($event)"></span> -->
+                                                        </a>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+                                        </ng-container>
+
+                                    </tbody>
+                                </table>
+                                <div class="options-dropdown dropdown-menu">
+                                    <a class="dropdown-item find-replace-action" (click)="openFindReplaceMenu()">Find
+                                        &amp; Replace</a>
+                                    <a class="dropdown-item date-filter-action" (click)="openDateFilterMenu($event)">Date
+                                        Filter
+                                    </a>
+                                    <a class="dropdown-item concat-columns-action" (click)="openConcatColumnsMenu($event)">Concat
+                                        Columns
+                                    </a>
+                                    <a class="dropdown-item number-filter-action" (click)="openNumberFilterMenu($event)">Number
+                                        Filter
+                                    </a>
+                                </div>
+                                <div class="edit-dropdown">
+                                    <div class="dropdown-head">
+                                        <span class="action-head">Edit</span>
+                                        <span class="close-icon float-right " (click)="closeEditDropDown()"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" />
+                                    </div>
+                                    <div class="button-wrapper">
+                                        <button class="btn btn-sm apply-btn">apply</button>
+                                        <button class="btn btn-sm apply-all-btn float-right">apply to all</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-wrapper">
+                            <div class="right-wrapper float-right">
+                                <div class="pagination-wrapper">
+                                    <div class="pagination-wrapper">
+                                        <ul *ngIf="activePager.pages && activePager.pages.length" class="pagination">
+                                            <li>
+                                                <a class="page-icon first-page" [ngClass]="{'disabled':activePager.currentPage === 1, 'active':activePager.currentPage !== 1}"
+                                                    (click)="setActivePage(1,paginationLength)">
+                                                </a>
+
+                                            </li>
+                                            <li>
+                                                <a class="page-icon prev-page" [ngClass]="{'disabled':activePager.currentPage === 1, 'active':activePager.currentPage !== 1}"
+                                                    (click)="setActivePage(activePager.currentPage - 1,paginationLength)">
+                                                </a>
+
+                                            </li>
+                                            <li *ngFor="let page of activePager.pages" [ngClass]="{active:activePager.currentPage === page}">
+                                                <a href="javascript:void(0);" (click)="setActivePage(page,paginationLength)">{{page}}</a>
+                                            </li>
+
+                                            <li>
+                                                <a class="page-icon next-page" [ngClass]="{'disabled':activePager.currentPage === activePager.totalPages, 'active':activePager.currentPage !== activePager.totalPages}"
+                                                    (click)="setActivePage(activePager.currentPage + 1,paginationLength)">
+                                                </a>
+
+                                            </li>
+                                            <li>
+                                                <a class="page-icon last-page" [ngClass]="{'disabled':activePager.currentPage === activePager.totalPages, 'active':activePager.currentPage !== activePager.totalPages}"
+                                                    (click)="setActivePage(activePager.totalPages,paginationLength)">
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-wrapper2" style="display: none">
+            <span> Select Tables</span>
+            <button data-target="#joinTable" class="btn btn-primary " (click)="joinTable()" style="opacity: 20; background-color: #4d84c4;font-family: 'Myriad Semi Bold' !important;color: #ffffff;top:4px;float:right;position: relative;right:20px"
+                data-toggle="modal">Select Join</button>
+            <hr>
+            <div id="wrangle-tables">
+                <div class="col-md-12 position-absolute" *ngIf="showLoader">
+                    <div class="loader-circle"></div>
+                </div>
+                <ng-container *ngFor="let table of wrangleTables; let i = index;">
+                    <div id="table-{{table.tbl}}" class="loaded-tables">
+                        <div id="header-{{table.tbl}}" class="loaded-table-header">
+                            <span>
+                                <input type="checkbox" disabled value="{{table.tbl}}"> {{table.tbl}}</span>
+                            <span class="icon maximize" data-toggle="collapse" [attr.data-parent]="'#table-'+table.tbl"
+                                [attr.data-target]="'#body-'+table.tbl" aria-expanded="false"></span>
+                        </div>
+                        <div id="body-{{table.tbl}}" class="loaded-table-columns collapse">
+                            <ng-container *ngFor="let column of table.columns;">
+                                <div id="colBody-{{column.columnName}}">
+                                    <span>
+                                        <input type="checkbox" value="{{column.columnName}}" (change)="createWrangleJSON($event,table.tbl)">{{column.columnName}}
+                                    </span>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <div class="content-wrapper3" style="display: none">
+            <span> Wrangle Preview</span>
+            <button (click)=quickWrangleOpen() class="btn btn-primary " style="opacity: 20; background-color: #4d84c4;font-family: 'Myriad Semi Bold' !important;color: #ffffff;top:4px;float:right;position: relative;right:20px"
+                data-toggle="modal">Joined Table</button>
+            <hr>
+            <div class="function-bar">
+                <input name="functions" id="functions" spellcheck="false" class="input-wrangle">
+                <button button class="btn btn-primary " (click)=submitFunction(); style="opacity: 20; background-color: #4d84c4;font-family: 'Myriad Semi Bold' !important;color: #ffffff;position: relative; left: 10px;">Preview</button>
+                <button button class="btn btn-primary " data-target="#targetTable" data-toggle="modal" style="opacity: 20; background-color: #4d84c4;font-family: 'Myriad Semi Bold' !important;color: #ffffff;position: relative; left: 20px;">Apply</button>
+            </div>
+            <br>
+            <br>
+            <div class="table-wrapper">
+                <div class="col-md-12 position-absolute" *ngIf="showLoader">
+                    <div class="loader-circle"></div>
+                </div>
+                <table class="table data-export-table">
+                    <thead>
+                        <tr *ngFor="let header of wranglePreview  | slice:0:1;">
+                            <th *ngFor="let headerdata of header">
+                                <div>{{headerdata}}
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let data of wranglePreview | slice:1;">
+                            <tr>
+
+                                <td *ngFor="let eachValue of data" style="padding-top: 0.25rem;padding-bottom: 0.25rem">
+                                    <div>
+                                        {{eachValue}}
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </ng-container>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="tableViewPopup" class="modal fade table-popup" role="dialog">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Table Name</h4>
+                    </div>
+
+                    <div class="container">
+
+                        <div class=" modal-body table-responsive">
+                            <table class="table table-view ">
+                                <thead>
+                                    <tr>
+                                        <th>parent</th>
+                                        <th colspan="1000">child</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let eachJson of tableView_Response">
+                                        <td>{{eachJson.parent}}</td>
+                                        <td *ngFor="let eachChild of eachJson.childs">
+                                            <div class="column-selection">
+                                                <div class="col-tags">
+                                                    <div class="cols">
+                                                        <li> {{eachChild}}</li>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <!-- fileselection Modal start -->
+        <div class="modal fade table-popup transform-popup fileselection-popup" id="fileselection" data-backdrop="static">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content transform-content popup-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" (click)="closeFileVersions()">&times;</button>
+                        <h4 class="modal-title">File Versions</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="flow-radio-option">
+                            <form name="form" #selectFolderForm="ngForm" (submit)="radioSel && scriptOnVersionSel()"
+                                novalidate>
+                                <table class="table table-view">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Created By</th>
+                                            <th>Created Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ng-container *ngFor="let eachVal of versions ; let i = index; ">
+                                            <tr *ngIf="i < 5">
+                                                <td>
+                                                    <label class="radio-container">
+                                                        <input type="radio" name="workflowradio" (click)="passCommitDate(eachVal.commitedDate)">
+                                                        <span class="checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td>{{eachVal.commitedBy}}</td>
+                                                <td>{{eachVal.commitedDate}}</td>
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                                <div *ngIf="!radioSel &&  selectFolderForm.submitted " id="errMessage">
+                                    Selection of Commit Date is required
+                                </div>
+                                <div class="button-wrapper">
+                                    <button type="submit" class="btn btn-primary btn-sm worklineSubmit">Load Code
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- fileselection Modal end -->
+
+        <!-- runcode Modal start -->
+        <div class="modal fade table-popup transform-popup runcode-popup" id="runcode" data-backdrop="static">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content transform-content popup-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" (click)="close_ZappelinConnect()">&times;</button>
+                        <h4 class="modal-title">Staging Buckets</h4>
+                    </div>
+                    <div class="modal-body">
+                        <!-- <div class="zappelinConnectSuccessInfo" hidden>
+                            <div class="zappelinConnectSuccessImg"></div>
+                            <div class="zappelinConnectSuccessText">
+                                <span>{{zappelinConnectResponse}}</span>
+                            </div>
+                        </div> -->
+                       <div class="flow-radio-option">
+                            <form name="form" (ngSubmit)="stagingBucketForm.form.valid && zappelinConnect()"
+                                #stagingBucketForm="ngForm" novalidate>
+                                <p class="select-text">Select the Staging Bucket name:</p>
+                                <label class="radio-container"> Raw
+                                    <input type="radio" name="zappelinConnectRadioValue" value="raw" [(ngModel)]="zappelinConnectRadioValue"
+                                        #buckettype_ref="ngModel" [ngClass]="{ 'is-invalid': stagingBucketForm.submitted && buckettype_ref.invalid}"
+                                        required (change)="stagingBucket()">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="radio-container"> Landing
+                                    <input type="radio" name="zappelinConnectRadioValue" value="landing" [(ngModel)]="zappelinConnectRadioValue"
+                                        #buckettype_ref="ngModel" [ngClass]="{ 'is-invalid': stagingBucketForm.submitted && buckettype_ref.invalid}"
+                                        required (change)="stagingBucket()">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="radio-container"> Processed
+                                    <input type="radio" name="zappelinConnectRadioValue" value="processed" [(ngModel)]="zappelinConnectRadioValue"
+                                        #buckettype_ref="ngModel" [ngClass]="{ 'is-invalid': stagingBucketForm.submitted && buckettype_ref.invalid}"
+                                        required (change)="stagingBucket()">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <div *ngIf=" stagingBucketForm.submitted && buckettype_ref.invalid " class="invalidFeedback">
+                                    <div *ngIf="buckettype_ref.errors.required">Select type of stagging bucket </div>
+                                </div>
+
+                                <p class="select-text" style="margin-top: 1rem;">Select the Execution Mode:</p>
+                                <label class="radio-container"> Synchronous
+                                    <input type="radio" name="zappelinExecModeValue" value="sync" [(ngModel)]="zappelinExecModeValue"
+                                        #exectype_ref="ngModel" [ngClass]="{ 'is-invalid': stagingBucketForm.submitted && exectype_ref.invalid }"
+                                        required (change)="stagingBucket()">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="radio-container" style="margin-left:-50px;"> Asynchronous
+                                    <input type="radio" name="zappelinExecModeValue" value="async" [(ngModel)]="zappelinExecModeValue"
+                                        #exectype_ref="ngModel" [ngClass]="{ 'is-invalid': stagingBucketForm.submitted && exectype_ref.invalid }"
+                                        required (change)="stagingBucket()">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <div *ngIf=" stagingBucketForm.submitted && exectype_ref.invalid" class="invalidFeedback">
+                                    <div *ngIf="exectype_ref.errors.required">Select Execution type </div>
+                                </div>
+
+                                <div class="comments-wrapper ">
+                                    <textarea class="comments-textarea" id="zappleinTextarea" [(ngModel)]="zappelintextArea"
+                                        name="zappelintextArea" placeholder="Enter Table Creation Comments"
+                                        #zappelintextArea_ref="ngModel" required [ngClass]="{ 'is-invalid': stagingBucketForm.submitted && zappelintextArea_ref.invalid }"></textarea>
+                                    <div *ngIf="stagingBucketForm.submitted && zappelintextArea_ref.invalid" class="invalidFeedback">
+                                        <div *ngIf="zappelintextArea_ref.errors.required" class="float-left">Comment is
+                                            required
+                                        </div>
+                                    </div>
+                                    <span class="char-left">0/1024 Characters</span>
+                                </div>
+
+                                <div class="button-wrapper">
+                                    <button type="submit" id="submit-zappelin" class="btn btn-primary btn-sm worklineSubmit"
+                                        data-toggle="modal">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- runcode Modal end -->
+
+        <!-- checkin Modal start -->
+        <div class="modal fade table-popup transform-popup checkin-popup" id="checkinPopup" data-backdrop="static">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content transform-content popup-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" (click)="closeCheckinPopup()">&times;</button>
+                        <h4 class="modal-title">Do you want to commit?</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="commitSuccessInfo" hidden>
+                            <div class="commitSuccessImg"></div>
+                            <div class="commitSuccessText">
+                                <span>{{commitResponse}}</span>
+                            </div>
+                        </div>
+                        <div class="flow-radio-option">
+                            <form name="form" (ngSubmit)="checkinForm.form.valid && commitScriptChanges()" #checkinForm="ngForm"
+                                novalidate>
+                                <div class="comments-wrapper">
+                                    <textarea class="comments-textarea" id="commitMsgArea" name="commitMsg" [(ngModel)]="commitMsg"
+                                        #commitMsg_ref="ngModel" placeholder="Enter commit message" required [ngClass]="{ 'is-invalid': checkinForm.submitted && commitMsg_ref.invalid }"></textarea>
+
+                                    <div *ngIf="checkinForm.submitted && commitMsg_ref.invalid" class="invalidFeedback align-left">
+                                        comments Required.
+                                    </div>
+                                    <span class="char-left">0/1024 Characters</span>
+                                </div>
+                                <div class="button-wrapper">
+                                    <button type="submit" id="checkin_submit" class="btn btn-primary btn-sm worklineSubmit">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- checkin Modal end -->
+        <div class="modal fade table-popup transform-popup" id="transform" data-backdrop="static">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content transform-content popup-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" (click)="closeTransform()">&times;</button>
+                        <h4 class="modal-title">Select Row</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="flow-radio-option">
+                            <form name=form #transformForm="ngForm" (submit)="onSubmit();">
+
+                                <label class="radio-container">Workflow
+                                    <input type="radio" id="radioButton" name="radioValue" [(ngModel)]="radioVal"
+                                        (change)="onSelectionChangeDisplay()" value="workflow" checked="checked"
+                                        required>
+                                    <span class="checkmark"></span>
+                                </label>
+
+                                <label class="radio-container">Fetch Pipeline
+                                    <input type="radio" id="radioButton" name="radioValue" [(ngModel)]="radioVal"
+                                        (change)="onSelectionChangeDisplay()" value="pipeline" required>
+                                    <span class="checkmark"></span>
+                                </label>
+
+                                <div *ngIf="radioNtselected && (submitWorkflow || submitPipeline)" class="copy_pipeline_invalid-feedback">
+                                    Selection of radio value is mandatory
+                                </div>
+
+                                <div *ngIf="showWorkflow">
+                                    <div class="data-display-wrapper float-right">
+                                        Showing
+                                        <select name="workflow_display" [(ngModel)]="flowDisplayLimit">
+                                            <option value="5">5</option>
+                                            <option value="20">20</option>
+                                            <option value="30">30</option>
+                                            <option value="40">40</option>
+                                            <option value="50">50</option>
+                                        </select>
+                                        of 50 jobs
+                                    </div>
+                                    <table class="table table-view">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Flow Name</th>
+                                                <th>Flow Comments</th>
+                                                <th>Flow Creation Date</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr>
+                                                <th></th>
+                                                <th>
+                                                    <input type="text" class="col-search" name="searchflow" [(ngModel)]="searchFlow"
+                                                        (keyup)="searchFlowList()" placeholder="Enter your search " />
+                                                </th>
+                                                <th>
+                                                    <input type="text" class="col-search" name="searchFlowComments"
+                                                        [(ngModel)]="searchFlowComments" (keyup)="searchFlowComment()"
+                                                        placeholder="Enter your search " />
+                                                </th>
+                                                <th>
+                                                    <input type="text" class="col-search" name="searchFlowCreationDate"
+                                                        [(ngModel)]="searchFlowCreationDate" (keyup)="searchFlowCreationDates()"
+                                                        placeholder="Enter your search " />
+                                                </th>
+                                            </tr>
+                                            <ng-container *ngFor="let job of flowList; let i = index;">
+                                                <tr *ngIf="i < flowDisplayLimit">
+                                                    <td>
+                                                        <label class="radio-container">
+                                                            <input type="radio" name="flow" (click)="selectedJob(job.name,job.flowId,job.tableComments)"
+                                                                [value]="job" required>
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td> {{job.name}} </td>
+                                                    <td>{{job.tableComments}}</td>
+                                                    <td>{{job.createdDate}}</td>
+                                                </tr>
+
+
+                                            </ng-container>
+
+                                        </tbody>
+                                    </table>
+                                    <div *ngIf="flowNtSelected && submitWorkflow " class="copy_pipeline_invalid-feedback">
+                                        Flow selection is mandatory
+                                    </div>
+                                </div>
+
+                                <div *ngIf="showUserPipeline" class="user-pipeline-blk ">
+                                    <div class="col col-md-6">
+                                        <label>Select User</label>
+                                        <select name="pipelineUserName" (click)="tablesOfSelUser($event.target.value)">
+                                            <option value="null" hidden>Select User</option>
+
+                                            <option *ngFor="let user of users" value={{user}}>{{user}}</option>
+                                        </select>
+
+                                        <div *ngIf=" showUserPipeline && submitPipeline && showUserNtSel" class="transform_invalid-feedback">
+                                            Selection of User is mandatory
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col col-md-6">
+                                        <label>Select Pipeline</label>
+                                        <select name="pipelineTable" (click)="selectedTable($event.target.value)"
+                                            required>
+                                            <option value="null" hidden>Select Table</option>
+                                            <option value={{table}} *ngFor="let table of tables">{{table}}</option>
+                                        </select>
+                                        <div *ngIf="showUserPipeline && submitPipeline && tblNtSel" class="transform_invalid-feedback">
+                                            Selection of table is mandatory
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="button-wrapper">
+                                    <button type="submit" class="btn btn-primary btn-sm worklineSubmit" (click)="removeWranglingModals()">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- transform Modal end -->
+
+        <!--copy pipeline modal start-->
+        <div class="modal fade table-popup transform-popup copyPipeline-popup" id="copyPipeline">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content transform-content popup-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" (click)="closeCopyPipeline()">&times;</button>
+                        <h4 class="modal-title">Copy pipeline</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="flow-radio-option">
+                            <form name="form" (ngSubmit)="copyPipelineForm.form.valid && onSubmit()" #copyPipelineForm="ngForm"
+                                novalidate>
+                                <div class="form-group">
+                                    <label for="tableName">Enter the new Table name </label>
+                                    <input type="text" name="tableName" [(ngModel)]="tableName" #tableName_ref="ngModel"
+                                        [ngClass]="{ 'is-invalid': copyPipelineForm.submitted &&  tableName_ref.invalid }"
+                                        class="form-control" required>
+                                    <div *ngIf=" copyPipelineForm.submitted && tableName_ref.invalid" class="invalid-feedback">
+                                        <div *ngIf="tableName_ref.errors.required">Table Name is required</div>
+                                    </div>
+                                </div>
+                                <div class="comments-wrapper">
+                                    <textarea class="comments-textarea" name="tbComments" [(ngModel)]="tbComments"
+                                        placeholder="Enter comments..." #tbComments_ref="ngModel" required [ngClass]="{ 'is-invalid': copyPipelineForm.submitted &&  tbComments_ref.invalid }"></textarea>
+                                    <div *ngIf="copyPipelineForm.submitted && tbComments_ref.invalid" class="copy_pipeline_invalid-feedback left-alignment">
+                                        <div *ngIf="tbComments_ref.errors.required">Comments is required</div>
+                                    </div>
+                                    <span class="char-left">0/1024 Characters</span>
+                                </div>
+                                <div class="button-wrapper">
+                                    <button type="submit" class="btn btn-primary btn-sm worklineSubmit">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--copy pipeline modal end-->
+
+        <!-- addFileFolderPopup Modal start -->
+        <div class="modal fade table-popup  transform-popup add-file-popup" id="addFileFolderPopup" data-backdrop="static">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content transform-content popup-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" (click)="closeAddFile();">&times;</button>
+                        <h4 class="modal-title">Add file to Git</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form name="form" (ngSubmit)="f.form.valid && addFile()" #f="ngForm" novalidate>
+                            <div class="addFileSuccessInfo" hidden>
+                                <div class="addFileSuccessImg"></div>
+                                <div class="addFileSuccessText">
+                                    <span>{{addFileResponse}}</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fileToAdd">File Name</label>
+                                <input type="text" name="fileToAdd" [(ngModel)]="fileToAdd" #fileToAdd_ref="ngModel"
+                                    [ngClass]="{ 'is-invalid': f.submitted &&  fileToAdd_ref.invalid  }" class="form-control"
+                                    required>
+                                <div *ngIf=" f.submitted && fileToAdd_ref.invalid" class="invalid-feedback">
+                                    <div *ngIf="fileToAdd_ref.errors.required">File is required</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="folderOfNewFile">Folder Name</label>
+                                <input type="text" name="folderOfNewFile" [(ngModel)]="folderOfNewFile"
+                                    #folderOfNewFile_ref="ngModel" [ngClass]="{ 'is-invalid': f.submitted  && folderOfNewFile_ref.invalid  }"
+                                    class="form-control" required>
+                                <div *ngIf="f.submitted  && folderOfNewFile_ref.invalid" class="invalid-feedback">
+                                    <div *ngIf="folderOfNewFile_ref.errors.required">Folder is required</div>
+                                </div>
+                            </div>
+                            <div class="button-wrapper">
+                                <button type="submit" id="addFile-submit" class="btn btn-primary btn-sm worklineSubmit">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- addFileFolderPopup Modal end -->
+
+        <div id="myModal" class="modal fade modal-popup image-popup" data-backdrop="static" role="dialog" style="overflow-x: auto;
+        overflow-y: auto;padding-left:0px;">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close" data-dismiss="modal" (click)="closeMyModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12 position-absolute" *ngIf="showLoaderForImage">
+                            <div class="loader-circle"></div>
+                        </div>
+                        <div [hidden]="showLoaderForImage">
+                            <img id="zoom_05" [src]=imageSrc_small data-zoom-image="imageSrc" alt="Logo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- join table popup start -->
+        <div class="modal fade table-popup join-popup" id="joinTable" data-backdrop="static">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content join-content popup-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select tables</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="user-pipeline-blk ">
+                            <div class="FormRow clear">
+                                <div class="FormColumn clear">
+                                    <label>Join Type</label>
+                                    <select name="joinType" id="joinType" (click)="joinType($event.target.value)">
+                                        <option value="inner join">Inner Join</option>
+                                        <option value="left outer join">Left Outer Join</option>
+                                        <option value="right outer join">Right Outer Join</option>
+                                        <option value="full outer join">Full Outer Join</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="FormRow clear">
+                                <div class="FormColumn clear">
+                                    <label>Source Table</label>
+                                    <select name="sourceTable" id="srcTable" (click)="sourceTable($event.target.value)">
+                                        <option hidden value="default">Select Source Table</option>
+                                        <option value={{item.key}} *ngFor="let item of wrangleSelTables | keyvalue">{{item.key}}</option>
+                                    </select>
+
+                                </div>
+                                <div class="FormColumn clear">
+                                    <label>Destination Table</label>
+                                    <select name="destinationTable" id="destTable" (click)="destinationTable($event.target.value)">
+                                        <option hidden value="default">Select Destination Table</option>
+                                        <option value={{item.key}} *ngFor="let item of wrangleSelTables | keyvalue">{{item.key}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="FormRow clear">
+                                    <div class="FormColumn clear">
+
+                                        <label>Source Attribute</label>
+                                        <select name="srcAttrib" id="srcAttrib">
+                                            <option hidden value="default">Select Join Column</option>
+                                            <option value={{table}} *ngFor="let table of relatedSrcColumns">{{table}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="FormColumn clear">
+
+                                        <label>Destination Attribute</label>
+                                        <select name="destAttrib" id="destAttrib">
+                                            <option hidden value="default">Select Join Column</option>
+                                            <option value={{table}} *ngFor="let table of relatedDestColumns">{{table}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="button-wrapper">
+                            <button type="submit" class="btn btn-primary btn-sm worklineSubmit" data-dismiss="modal"
+                                (click)="submitJoin()">Submit</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- join table popup end -->
+
+        <!-- targe table popup start-->
+        <div class="modal fade table-popup join-popup" id="targetTable" data-backdrop="static">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content join-content popup-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Target Table</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input name="targetTableInput" id="targetTableInput" spellcheck="false">
+                        <div class="button-wrapper">
+                            <button type="submit" class="btn btn-primary btn-sm worklineSubmit" data-dismiss="modal"
+                                (click)="createWrangleTable()">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- targe table popup end-->
+
+        <!-- zepplinlog Modal start -->
+        <div class="modal fade table-popup transform-popup zepplin-log-popup" id="zepplinLog" data-backdrop="static">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content transform-content popup-modal" style="width: 500px;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" (click)="close_ZappelinConnect()">&times;</button>
+                        <h4 class="modal-title">Execution Log</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="zappelinConnectSuccessInfo" hidden>
+                            <div class="zappelinConnectSuccessImg"></div>
+                            <div class="zappelinConnectSuccessText">
+                                <span>{{zappelinConnectResponse}}</span>
+                            </div>
+                        </div>
+                        <div>
+
+                            <textarea id="zepplin-logs-ouput" readonly disabled style="resize:none" [(ngModel)]="zepplinLog">
+                                    </textarea>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- zepplinlog Modal end -->
+    </section>
+</main>

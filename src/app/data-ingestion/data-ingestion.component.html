@@ -1,0 +1,1090 @@
+<main class="container-fluid container-wrapper">
+    <section class="main-container">
+        <div class="main-header-wrapper">
+            <span class="header-text">Data Ingestion</span>
+            <button class="btn btn-primary btn-lg float-right" data-toggle="modal" data-target="#createjobs">Create Jobs
+            </button>
+        </div>
+        <div class="content-wrapper">
+            <div class="activity-wrapper">
+                <div class="search-wrapper">
+                    <input type="text" [(ngModel)]="search" (keyup)="searchJobs()" placeholder="Search by Job Name" />
+                    <button type="button">
+                        <img src="../../assets/images/Search.png" />
+                    </button>
+                </div>
+                <div class="right-wrapper float-right">
+                    <div class="data-display-wrapper">
+                        Showing
+                        <select [(ngModel)]="displayLimit" (change)="refreshPagination()">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="50">50</option>
+                        </select>
+                        of {{jobCount}} jobs
+                    </div>
+                    <div class="pagination-wrapper">
+                        <ul *ngIf="activePager.pages && activePager.pages.length" class="pagination">
+                            <li>
+                                <a class="page-icon first-page" [ngClass]="{'disabled':activePager.currentPage === 1, 'active':activePager.currentPage !== 1}"
+                                    (click)="setActivePage(1,paginationLength)">
+                                </a>
+                            </li>
+                            <li>
+                                <a class="page-icon prev-page" [ngClass]="{'disabled':activePager.currentPage === 1, 'active':activePager.currentPage !== 1}"
+                                    (click)="setActivePage(activePager.currentPage - 1,paginationLength)">
+                                </a>
+                            </li>
+                            <li *ngFor="let page of activePager.pages" [ngClass]="{active:activePager.currentPage === page}">
+                                <a href="javascript:void(0);" (click)="setActivePage(page,paginationLength)">{{page}}</a>
+                            </li>
+                            <li>
+                                <a class="page-icon next-page" [ngClass]="{'disabled':activePager.currentPage === activePager.totalPages, 'active':activePager.currentPage !== activePager.totalPages}"
+                                    (click)="setActivePage(activePager.currentPage + 1,paginationLength)">
+                                </a>
+                            </li>
+                            <li>
+                                <a class="page-icon last-page" [ngClass]="{'disabled':activePager.currentPage === activePager.totalPages, 'active':activePager.currentPage !== activePager.totalPages}"
+                                    (click)="setActivePage(activePager.totalPages,paginationLength)">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <table class="table ingestion-table">
+                <thead>
+                    <tr>
+                        <th (click)="sortJobs('id')" style="min-width: 100px;">job id</th>
+                        <th>source table</th>
+                        <th>job name</th>
+                        <th>comments</th>
+                        <th (click)="sortJobs('createdDate')">creation date</th>
+                        <th>deploy</th>
+                        <th>execute</th>
+                        <th>rerun</th>
+                        <th>workflow</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="showLoader">
+                        <td colspan="9" class="position-absolute w-100">
+                            <div class="loader-circle"></div>
+                        </td>
+                    </tr>
+
+                    <ng-container *ngFor="let job of jobsList; let i = index;">
+                        <tr>
+                            <td>{{job.id}}</td>
+                            <td>
+                                <div>{{job.oldTable}}</div>
+                            </td>
+                            <td>
+                                <div>{{job.name}}</div>
+                            </td>
+                            <td>
+                                <div>{{job.comments}}</div>
+                            </td>
+                            <td>{{job.createdDate}}</td>
+                            <td>
+                                <span class="job-icon deploy" (click)="deploy(job.id)" (mouseenter)="initStatusInfoMover($event)" (mouseout)="initStatusInfoMout()"
+                                    [ngClass]="depStatus[job.id]=='STARTED' ? 'started' : (job.deploymentStatus==2 ? 'success' : (job.deploymentStatus ==3 ? 'failure' : 'not-started' ))"></span>
+                            </td>
+                            <td>
+                                <span class="job-icon execute" id="exec-button-{{job.id}}" (click)="execute(job.id)" (mouseenter)="initStatusInfoMover($event)"
+                                    (mouseout)="initStatusInfoMout()" [ngClass]="((exStatus[job.id]=='STARTED') ||(job.exStatus=='STARTED'))? 'started' : (job.exStatus=='SUCCEEDED' ? 'success' : ((job.exStatus=='FAILED') || (job.exStatus=='KILLED') ? 'failure' : 'not-started'))"></span>
+                            </td>
+
+                            <td>
+                                <ng-container *ngIf="job.subjobsList !== null;then hideRerun else showRerun"></ng-container>
+
+                                <ng-template #showRerun>
+                                    <span class="job-icon rerun " (click)="passJobId(job.id,job.name,job.comments)" data-toggle="modal" (mouseenter)="initStatusInfoMover($event)"
+                                        (mouseout)="initStatusInfoMout()" [ngClass]="{'success': job.reRunStatus == 2,'failure': job.reRunStatus == 3, 'not-started': (job.reRunStatus != 1 && job.reRunStatus != 2 && job.reRunStatus != 3), 'started': job.reRunStatus == 1}"></span>
+                                </ng-template>
+                                <ng-template #hideRerun>
+
+                                </ng-template>
+
+                                <td>
+                                    <span class="job-icon workflow" (click)="showLineage(job.flowId)" data-toggle="modal" data-target="#workflow"></span>
+                                </td>
+                                <td>
+                                    <span (click)="showSubJobsfunc(job.id)" [ngClass]="(job.showSubJobs)? 'icon minimize':'icon maximize'"></span>
+                                </td>
+                        </tr>
+                        <ng-container *ngIf="job.showSubJobs">
+
+                            <tr *ngFor="let subJob of job.subjobsList">
+                                <td>{{subJob.id}}</td>
+                                <td>{{subJob.oldTable}}</td>
+                                <td>{{subJob.name}}</td>
+                                <td>{{subJob.comments}}</td>
+                                <td>{{subJob.createdDate}}</td>
+                                <td>
+                                    <span class="job-icon deploy" (click)="deploy(subJob.id)" (mouseenter)="initStatusInfoMover($event)" (mouseout)="initStatusInfoMout()"
+                                        [ngClass]="depStatus[job.id]=='STARTED' ? 'started' : (subJob.deploymentStatus==2 ? 'success' : (subJob.deploymentStatus ==3 ? 'failure' : 'not-started' ))"></span>
+                                </td>
+                                <td>
+                                    <span class="job-icon execute" id="exec-button-{{subJob.id}}" (click)="execute(subJob.id)" (mouseenter)="initStatusInfoMover($event)"
+                                        (mouseout)="initStatusInfoMout()" [ngClass]="((exStatus[job.id]=='STARTED') ||(job.exStatus=='STARTED'))? 'started' : (subJob.exStatus=='SUCCEEDED' ? 'success' : ((subJob.exStatus=='FAILED') || (subJob.exStatus=='KILLED') ? 'failure' : 'not-started'))"></span>
+                                </td>
+                                <td>
+                                    <span class="job-icon rerun " (click)="passJobId(subJob.id,subJob.name)" data-toggle="modal" data-target="#selectLoad" (mouseenter)="initStatusInfoMover($event)"
+                                        (mouseout)="initStatusInfoMout()" [ngClass]="{'success': subJob.reRunStatus == 2,'failure': subJob.reRunStatus == 3, 'not-started': (subJob.reRunStatus != 1 && subJob.reRunStatus != 2 && subJob.reRunStatus != 3), 'started': subJob.reRunStatus == 1}"></span>
+                                </td>
+                                <td>
+                                    <!-- <span class="job-icon workflow" (click)="showLineage(subJob.flowId)" data-toggle="modal"
+                                        data-target="#workflow"></span> -->
+                                </td>
+
+                            </tr>
+                        </ng-container>
+                    </ng-container>
+                </tbody>
+            </table>
+            <div class="status-info-wrapper">
+                <p class="legend">Legend</p>
+                <p>
+                    <span class="status-circle success"></span>Succeeded</p>
+                <p>
+                    <span class="status-circle not-started"></span>Not Started</p>
+                <p>
+                    <span class="status-circle started"></span>Started</p>
+                <p>
+                    <span class="status-circle failure"></span>Failed</p>
+            </div>
+            <div class="activity-wrapper">
+                <div class="right-wrapper float-right">
+                    <div class="data-display-wrapper">
+                        Showing
+                        <select [(ngModel)]="displayLimit" (change)="refreshPagination()">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="50">50</option>
+                        </select>
+                        of {{jobCount}} jobs
+                    </div>
+                    <div class="pagination-wrapper">
+                        <ul *ngIf="activePager.pages && activePager.pages.length" class="pagination">
+                            <li>
+                                <a class="page-icon first-page" [ngClass]="{'disabled':activePager.currentPage === 1, 'active':activePager.currentPage !== 1}"
+                                    (click)="setActivePage(1,paginationLength)">
+                                </a>
+                            </li>
+                            <li>
+                                <a class="page-icon prev-page" [ngClass]="{'disabled':activePager.currentPage === 1, 'active':activePager.currentPage !== 1}"
+                                    (click)="setActivePage(activePager.currentPage - 1,paginationLength)">
+                                </a>
+                            </li>
+                            <li *ngFor="let page of activePager.pages" [ngClass]="{active:activePager.currentPage === page}">
+                                <a href="javascript:void(0);" (click)="setActivePage(page,paginationLength)">{{page}}</a>
+                            </li>
+                            <li>
+                                <a class="page-icon next-page" [ngClass]="{'disabled':activePager.currentPage === activePager.totalPages, 'active':activePager.currentPage !== activePager.totalPages}"
+                                    (click)="setActivePage(activePager.currentPage + 1,paginationLength)">
+                                </a>
+                            </li>
+                            <li>
+                                <a class="page-icon last-page" [ngClass]="{'disabled':activePager.currentPage === activePager.totalPages, 'active':activePager.currentPage !== activePager.totalPages}"
+                                    (click)="setActivePage(activePager.totalPages,paginationLength)">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- workflow -->
+
+        <!--Stream popup-->
+
+
+        <div class="modal fade modal-popup stream-popup" id="stream" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content streampopup-content popup-modal">
+                    <div class="modal-header">
+                        <span class="close" data-dismiss="modal"></span>
+                        <h4 class="modal-title">Ingest from Data Streams</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form name=" form" #streamForm="ngForm" (submit)="streamForm.valid && submitStream()">
+                            <div class="action-message" id="stream-action">
+                                <div class="action-icon failure"></div>
+                                <div class="action-text">
+                                    <span>Text will go here</span>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>File Location</label>
+                                <input type="text" name="fileLocation" [(ngModel)]="fileLocation" class="form-control" required>
+                                <div *ngIf="streamForm.submitted && streamForm.invalid" id="errMessage">
+                                    <div *ngIf="streamForm.form.controls.fileLocation?.errors?.required">
+                                        File Location is mandatory</div>
+                                </div>
+                            </div>
+
+                            <label>File Type</label>
+                            <select id="fileType" name="fileType" [(ngModel)]="fileType" (change)="getFileType($event.target.value)" required>
+                                <option hidden [ngValue]="null">Select file type</option>
+                                <option value=".log">.log</option>
+                                <option value=".jpg">.jpg</option>
+                                <option value=".zip">.zip</option>
+                                <option value=".png">.png</option>
+                                <option>.txt</option>
+                            </select>
+                            <div *ngIf="streamForm.submitted && streamForm.invalid" id="errMessage">
+                                <div *ngIf="streamForm.form.controls.fileType?.errors?.required">File Type is mandatory
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Frequency</label>
+                                <input type="text" name="frequency" [(ngModel)]="frequency" class="form-control" required>
+                                <div *ngIf="streamForm.submitted && streamForm.invalid" id="errMessage">
+                                    <div *ngIf="streamForm.form.controls.frequency?.errors?.required">Frequency is mandatory
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="button-wrapper">
+                                <button type="submit " id="submitStream" class="btn btn-primary btn-sm worklineSubmit">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--stream popup close-->
+        <!-- ingestion of large data start-->
+        <div class="modal fade modal-popup largeData-popup" id="largeData" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content largeData-content popup-modal">
+                    <div class="modal-header">
+                        <span class="close" data-dismiss="modal" (click)="closeIngest()"></span>
+                        <h4 class="modal-title">Ingestion of Large Data</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form name=" form" #largeDataForm="ngForm" (submit)="submitlargeData()">
+                            <div class="action-message" id="largeData-action">
+                                <div class="action-icon failure"></div>
+                                <div class="action-text">
+                                    <span>Text will go here</span>
+                                </div>
+                            </div>
+
+                            <div style="font-size: 15px;font-weight:normal">
+                                <input type="text" name="jobName" style="width:250px;height:30px;margin-top:6pxl;text-align:center" placeholder="Enter Job Name"
+                                    [(ngModel)]="jobNameForLargeFile">
+                            </div>
+
+                            <div class="position-absolute w-100" *ngIf="showHorizLoder">
+                                <div class="loader-circle"></div>
+                            </div>
+                            <table class="table table-view">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>File Name</th>
+                                        <th>File Size(in MB)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let eachFile of fileNameToIngested">
+                                        <tr>
+                                            <td>
+                                                <label class="checkbox-container">
+                                                    <input type="checkbox" name="fileCheck" value={{eachFile}} [(ngModel)]="eachFile.selected" (ngModelChange)="checkFile( $event,eachFile.fileName)"
+                                                        required>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </td>
+                                            <td> {{eachFile.fileName}}</td>
+
+                                            <td>{{eachFile.size}}</td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                            <!-- <div *ngFor="let eachFile of fileNameToIngested">
+
+                                <label class="checkbox-container">
+                                    {{eachFile.fileName}}
+                                    <input type="checkbox" name="fileCheck" value={{eachFile}} [(ngModel)]="eachFile.selected"
+                                        (ngModelChange)="checkFile( $event,eachFile.fileName)" required>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div> -->
+
+                            <div *ngIf="ingestSubmitted && ingestErr" id="errMessage">
+                                Please select atleast one file.
+                            </div>
+
+                            <div style="padding-left:20px;font-size: 15px;font-weight:normal">
+
+                                <input type="text" name="threads" style="width:30px;height:30px;margin-top:6pxl;text-align:center" value="5" class="formControlName">
+                                <span style="padding-left:26px;font-family: Myriad Pro;font-size: 14px;">Number of threads to spawn</span>
+
+                            </div>
+
+                            <div class="
+                                    button-wrapper">
+                                <button type="submit " id="submitLargeData" class="btn btn-primary btn-sm worklineSubmit">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ingestion of large data end-->
+
+
+        <!-- response of large data start-->
+        <div class="modal fade modal-popup largeDataResponse-popup" id="largeDataResponse" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content popup-modal">
+                    <div class="modal-header">
+                        <span class="close" data-dismiss="modal"></span>
+                        <h4 class="modal-title">File Movement Info</h4>
+                    </div>
+                    <div class="modal-body">
+
+
+                        <table class="table table-view">
+                            <thead>
+                                <tr>
+
+                                    <th>Target File</th>
+                                    <th>Time Taken(in secs)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr *ngFor="let eachFile of largefileDataResponse.fileSizeList">
+                                    <td> {{largefileDataResponse.destLoc}} {{eachFile.fileName}}</td>
+
+                                    <td>{{eachFile.timeInSeconds}}</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <div class="
+                                    button-wrapper">
+                            <button type="submit " id="submitLargeDataResponse" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- response of large data end-->
+
+
+        <div class="modal fade modal-popup1 workflow-popup" id="workflow">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content  popup-modal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"></button>
+                        <h4 class="modal-title">Lineage</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="lineage-wrapper-dataIngestionPage">
+                            <select class="node-select" name="node-type">
+                                <option value="">Select</option>
+                                <option value="SQL">SQL</option>
+                                <option value="JAVA">JAVA</option>
+                                <option value="PYSPARK">PYSPARK</option>
+                                <option value="HIVE">HIVE</option>
+                                <option value="FILE">FILE</option>
+                            </select>
+                            <div class="lineage-btn-wrapper-dataIngestionPage">
+                                <div class="zoom-btn-wrapper">
+                                    <span id="zoom-in" class="lineage-icon zoom-in zoom-btn"></span>
+                                    <span id="zoom-out" class="lineage-icon zoom-out zoom-btn"></span>
+                                </div>
+                                <span id="re-center" class="lineage-icon re-center recenter"></span>
+                            </div>
+                            <div id="lineage-diagram" class="lineage-diagram"></div>
+                            <!-- <div *ngFor="let each of divGraphNameList" id="{{each}}" class= "lineage-diagram"></div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--workflow ends-->
+        <!-- Rerun Modal start -->
+        <div class="modal fade modal-popup rerun-popup" id="selectLoad" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content transform-content popup-modal">
+                    <div class="modal-header">
+                        <span class="close" (click)="closereRunpopUp()"></span>
+                        <h4 class="modal-title">Re-Run</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="rerunSuccessInfo" hidden>
+                            <div class="SuccessImg"></div>
+                            <div class="SuccessText">
+                                <span>{{rerunResponse}}</span>
+                            </div>
+                        </div>
+                        <div class="rerun-selection">
+                            <div class="radio-div">
+                                <label class="radio-container"> Truncate &amp; Reload
+                                    <br />
+                                    <small>Replace the old table</small>
+                                    <input type="radio" checked="checked" name="rerun-type" [(ngModel)]="radioSelected" value="TruncateAndLoad" (click)="truncateLoad()">
+
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="radio-div">
+                                <label class="radio-container"> Incremental Reload
+                                    <br />
+                                    <small>Add newly added fields</small>
+                                    <input type="radio" name="rerun-type" [(ngModel)]="radioSelected" value="IncrementalLoad" (click)="incrementalLoads()">
+
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                        </div>
+
+
+                        <div *ngIf="display">
+                            <div class="table-area">
+                                <table class="table table-view">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>ColumnName</th>
+                                            <th>DataType</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ng-container *ngFor="let column of columnsList; ">
+                                            <tr>
+                                                <td>
+                                                    <label class="radio-container">
+                                                        <input type="radio" name="selColumn" (click)="passSelColumn(column.columnName,column.dataType)">
+                                                        <span class="checkmark"></span>
+                                                    </label>
+                                                </td>
+                                                <td>{{column.columnName}}</td>
+                                                <td>{{column.dataType}}</td>
+                                            </tr>
+                                        </ng-container>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div *ngIf="columnSelErr" id="ingest-invalid-msg">
+                            Please select a column.
+
+                        </div>
+                        <div class="button-wrapper">
+                            <button type="submit" id="rerun-submit" class="btn btn-primary btn-sm rerun-submit-btn" (click)="submitLoadType()">
+                                Submit</button>
+                            <span> &nbsp; </span>
+                            <button type="button" class="btn btn-primary btn-sm ok-btn" data-dismiss="modal" (click)="hideSucess()">OK</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- reRun end!-->
+
+        <!-- createjobs Modal start -->
+        <div class="modal fade modal-popup create-jobs-popup" id="createjobs">
+            <div class="modal-dialog">
+                <div class="modal-content createjobs-content popup-modal">
+                    <div class="modal-header">
+                        <span class="close" data-dismiss="modal"></span>
+                        <h4 class="modal-title">Create Jobs</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="option-btn-content">
+                            <div class="btn-wrapper">
+                                <button type="button" class="btn btn-default" (click)="openFileModal('regular')">File</button>
+                            </div>
+                            <div class="data-wrapper">
+                                <span>This functionality enables data engineers to upload CSV files to hive table</span>
+                            </div>
+                        </div>
+                        <div class="option-btn-content">
+                            <div class="btn-wrapper">
+                                <button type="button" class="btn btn-default" (click)="dismissModal();fetchSchemas()">RDBMS</button>
+                            </div>
+                            <div class="data-wrapper">
+                                <span>This functionality enables data engineers to upload RDBMS tables to hive table</span>
+                            </div>
+                        </div>
+                        <div class="option-btn-content">
+                            <div class="btn-wrapper">
+                                <button type="button" class="btn btn-default" (click)="openStreamPopup()">Stream</button>
+                            </div>
+                            <div class="data-wrapper">
+                                <span>This functionality enables data engineers to ingest data from data Streams using KAFKA to
+                                    hive table </span>
+                            </div>
+                        </div>
+                        <div class="option-btn-content">
+                            <div class="btn-wrapper">
+                                <button type="button" class="btn btn-default" (click)="openIngestLargeData()">Ingest Large Files</button>
+                            </div>
+                            <div class="data-wrapper">
+                                <span>This functionality enables data engineers to ingest large data source to Hive.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="option-btn-content">
+                            <div class="btn-wrapper">
+                                <button type="button" class="btn btn-default" (click)="openFileModal('hbase')">NoSQL Ingestion
+                                </button>
+                            </div>
+                            <div class="data-wrapper">
+                                <span>This functionality enables data engineers to ingest data from TimeSeries Data to hive
+                                </span>
+                            </div>
+                        </div>
+                        <div class="option-btn-content">
+                            <div class="btn-wrapper">
+                                <button type="button" class="btn btn-default" disabled>SAP</button>
+                            </div>
+                            <div class="data-wrapper">
+                                <span>This functionality enables data engineers to ingest data from SAP systems to hive table
+                                </span>
+                            </div>
+                        </div>
+                        <div class="option-btn-content">
+                            <div class="btn-wrapper">
+                                <button type="button" class="btn btn-default" disabled>Lotus Notes</button>
+                            </div>
+                            <div class="data-wrapper">
+                                <span>This functionality enables data engineers to ingest data from Lotus Notes to hive table
+                                </span>
+                            </div>
+                        </div>
+                        <div class="option-btn-content">
+                            <div class="btn-wrapper">
+                                <button type="button" class="btn btn-default" disabled>BigChainDB</button>
+                            </div>
+                            <div class="data-wrapper">
+                                <span>This functionality enables data engineers to ingest data from BigChainDB to hive table
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- createjobs Modal end -->
+
+        <!-- file Modal start -->
+        <div class="modal fade modal-popup file-popup" id="fileModal" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content filepopup-content popup-modal">
+                    <div class="modal-header">
+                        <span class="close" (click)="resetCSVUpload()" data-dismiss="modal"></span>
+                        <h4 class="modal-title">File Ingestion</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="file-wrapper">
+                            <div class="action-message" id="action-result">
+                                <div class="action-icon failure"></div>
+                                <div class="action-text">
+                                    <span>Text will go here</span>
+                                </div>
+                                <!-- <span class="close"></span> -->
+                            </div>
+                            <div class="file-input">
+                                <div class="file-info">
+                                    <span class="file-name">{{csvName}}</span>
+                                    <span class="close" (click)="resetCSVUpload()"></span>
+                                </div>
+                                <div class="file-btn">
+                                    <span class="folder-icon"></span>
+                                    <input type="file" id="input-file" name="input-file" accept=".csv" (change)="csvUpload($event.target.files)" />
+                                </div>
+                            </div>
+                            <div *ngIf="(workflowType!=='regular')" class="noSql-selector">
+                                <span>Destination DB: </span>
+                                <label class="radio-container">HBase
+                                    <input type="radio" id="radioButton" name="radioValue" [(ngModel)]="radioVal" value="hbase"
+                                        checked="checked" required>
+                                    <span class="checkmark"></span>
+                                </label>
+
+                                <label class="radio-container">MongoDb
+                                    <input type="radio" id="radioButton" name="radioValue" [(ngModel)]="radioVal" value="mongodb"
+                                        required>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="comments-wrapper">
+                                <textarea class="comments-textarea" name="flow-creation-comments" [(ngModel)]="csvComments" placeholder="Enter Flow Creation Comments"></textarea>
+                                <span class="char-left">0/1024 Characters</span>
+                            </div>
+                        </div>
+                        <div class="table-area" id="table-area">
+                            <div class="table-header">
+                                <span class="header-text">Please select Data Type</span>
+                                <p class="float-right">
+                                    <span class="mandatory">*</span>Data type selection is mandatory</p>
+                            </div>
+                            <table id="csvTable" class="table table-view">
+                                <thead>
+                                    <tr>
+                                        <th>Column Name</th>
+                                        <th>Data Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let column of csvColumns;">
+                                        <tr>
+                                            <td>{{column}}</td>
+                                            <td>
+                                                <select id="{{column}}_datatype" name="data-type" (change)="displayDateField($event.target.value,column)">
+                                                    <option value="INT">INT</option>
+                                                    <option value="FLOAT">FLOAT</option>
+                                                    <option value="DOUBLE">DOUBLE</option>
+                                                    <option value="DECIMAL">DECIMAL</option>
+                                                    <option value="TIMESTAMP">TIMESTAMP</option>
+                                                    <option value="DATE">DATE</option>
+                                                    <option value="STRING">STRING</option>
+                                                    <option value="VARCHAR">VARCHAR</option>
+                                                    <option value="CHAR">CHAR</option>
+                                                    <option value="BOOLEAN">BOOLEAN</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <!-- <input id="data-type-{{column}}" type="text" name="date-format"
+                                                    placeholder="Date Format" /> -->
+                                                <select id="data-type-{{column}}" name="date-format" style="display: none;" required>
+                                                    <option value="dd/MM/yy">dd/MM/yy</option>
+                                                    <option value="dd/MM/yyyy">dd/MM/yyyy</option>
+                                                    <option value="dd/MMM/yyyy"> dd/MMM/yyyy</option>
+                                                    <option value="dd/MMMM/yyyy">dd/MMMM/yyyy</option>
+                                                    <option value="dd/MM/yyyy HH:mm:ss">dd/MM/yyyy HH:mm:ss</option>
+                                                    <option value="dd/M/yy">dd/M/yy</option>
+                                                    <option value="MM/dd/yyyy HH:mm">MM/dd/yyyy HH:mm</option>
+                                                    <option value="dd/MM/yyyy hh:mm:ss">dd/MM/yyyy hh:mm:ss</option>
+                                                    <option value="dd/MM/yyyy HH:mm:ss a">dd/MM/yyyy HH:mm:ss a</option>
+                                                    <option value="dd/MM/yyyy HH:mm:ss a z">dd/MM/yyyy HH:mm:ss a z</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="button-wrapper">
+                            <button id="submit-csv" class="btn btn-primary btn-sm" disabled=true (click)="submitCSV()">Submit</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- file Modal end -->
+
+        <!-- rdms-dbconnection Modal start -->
+        <div class="modal fade modal-popup conn-popup" id="rdms-dbconnection" data-backdrop="static">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content rdms-dbconnect-content popup-modal">
+                    <div class="modal-header">
+                        <span class="close" data-dismiss="modal" (click)="closeRDBMSPopup()"></span>
+                        <h4 class="modal-title">RDBMS - Database Connection</h4>
+                        <div class="position-absolute w-100" *ngIf="showHorizontalLoader">
+                            <div class="loader-horizontal"></div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="step-flex-container">
+                            <div class="step active-step">
+                                <p>Connect</p>
+                            </div>
+                            <div class="step disabled-step">
+                                <p>Ingest</p>
+                            </div>
+                        </div>
+
+                        <div class="ResetInfo" *ngIf="resetConnectForm">
+                            <div class="ResetImg"></div>
+                            <div class="ResetText">
+                                <span>Do you really want to reset?</span>
+                            </div>
+                            <div class="YesNoBtn">
+                                <button type="button" class="YesBtn" (click)="initConnectForm()">Yes</button>
+                                <button type="button" class="NoBtn" (click)="resetConnectForm=false">No</button>
+                            </div>
+                        </div>
+
+                        <div class="connectSuccessInfo" *ngIf="connectSuccess">
+                            <div class="SuccessImg"></div>
+                            <div class="SuccessText">
+                                <span>Test Connection was successful</span>
+                            </div>
+                        </div>
+
+                        <div class="connectSuccessInfo" *ngIf="connectError">
+                            <div class="FailureImg"></div>
+                            <div class="SuccessText">
+                                <span>Test Connection was not successful</span>
+                            </div>
+                        </div>
+
+                        <div class="ConnectDiv">
+                            <p>
+                                <span class="MandatoryField">*</span> All fields are mandatory</p>
+                            <form id="connectAndResetForm" [formGroup]="connectAndResetForm" (ngSubmit)="submitConnectForm(connectAndResetForm.value)">
+                                <div class="ConnectFormContainer">
+                                    <div class="FormRow clear">
+                                        <div class="FormColumn clear">
+                                            <label>Database Driver Name</label>
+                                            <select name="driverClass" (focusout)="fetchSchemas()" formControlName="driverClass">
+                                                <option value="com.microsoft.sqlserver.jdbc.SQLServerDriver">com.microsoft.sqlserver.jdbc.SQLServerDriver</option>
+                                                <option value="com.mysql.jdbc.Driver">com.mysql.jdbc.Driver</option>
+                                                <option value="oracle.jdbc.driver.OracleDriver">oracle.jdbc.driver.OracleDriver</option>
+                                                <option value="COM.ibm.db2.jdbc.net.DB2Driver">COM.ibm.db2.jdbc.net.DB2Driver</option>
+                                            </select>
+                                            <div class="form-group " *ngIf='(connectAndResetForm.controls.driverClass.invalid && connectAndResetForm.controls.driverClass.touched)'
+                                                [ngClass]="{'error': (connectAndResetForm.controls.driverClass.invalid && connectAndResetForm.controls.driverClass.touched)}">
+                                                This field is mandatory
+                                            </div>
+                                        </div>
+                                        <div class="FormColumn">
+                                            <label>Database URL</label>
+                                            <input type="text" name="dbUrl" (focusout)="fetchSchemas()" formControlName="dbUrl" [ngClass]="{'error': (connectAndResetForm.controls.dbUrl.invalid && connectAndResetForm.controls.dbUrl.touched)}">
+                                            <div class="form-group " *ngIf='(connectAndResetForm.controls.dbUrl.invalid && connectAndResetForm.controls.dbUrl.touched)'
+                                                [ngClass]="{'error': (connectAndResetForm.controls.dbUrl.invalid && connectAndResetForm.controls.dbUrl.touched)}">
+                                                This field is mandatory
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="FormRow clear">
+                                        <div class="FormColumn clear">
+                                            <label>Database Port</label>
+                                            <input type="text" name="dbPort" (focusout)="fetchSchemas()" formControlName="dbPort" [ngClass]="{'error': (connectAndResetForm.controls.dbPort.invalid && connectAndResetForm.controls.dbPort.touched)}">
+                                            <div class="form-group " *ngIf='(connectAndResetForm.controls.dbPort.invalid && connectAndResetForm.controls.dbPort.touched)'
+                                                [ngClass]="{'error': (connectAndResetForm.controls.dbPort.invalid && connectAndResetForm.controls.dbPort.touched)}">
+                                                This field is mandatory
+                                            </div>
+                                        </div>
+
+                                        <div class="FormColumn">
+                                            <label>Database Name</label>
+                                            <input type="text" name="dbName" (focusout)="fetchSchemas()" formControlName="dbName" [ngClass]="{'error': (connectAndResetForm.controls.dbName.invalid && connectAndResetForm.controls.dbName.touched)}">
+                                            <div class="form-group " *ngIf='(connectAndResetForm.controls.dbName.invalid && connectAndResetForm.controls.dbName.touched)'
+                                                [ngClass]="{'error': (connectAndResetForm.controls.dbName.invalid && connectAndResetForm.controls.dbName.touched)}">
+                                                This field is mandatory
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="FormRow clear">
+                                        <div class="FormColumn">
+                                            <label>Database User Name</label>
+                                            <input type="text" name="dbUser" (focusout)="fetchSchemas()" formControlName="dbUser" [ngClass]="{'error': (connectAndResetForm.controls.dbUser.invalid && connectAndResetForm.controls.dbUser.touched)}">
+                                            <div class="form-group " *ngIf='(connectAndResetForm.controls.dbUser.invalid && connectAndResetForm.controls.dbUser.touched)'
+                                                [ngClass]="{'error': (connectAndResetForm.controls.dbUser.invalid && connectAndResetForm.controls.dbUser.touched)}">
+                                                This field is mandatory
+                                            </div>
+                                        </div>
+
+                                        <div class="FormColumn">
+                                            <label>Database Password</label>
+                                            <input type="password" name="dbPassword" (focusout)="fetchSchemas()" formControlName="dbPassword" [ngClass]="{'error': (connectAndResetForm.controls.dbPassword.invalid && connectAndResetForm.controls.dbPassword.touched)}">
+                                            <div class="form-group " *ngIf='(connectAndResetForm.controls.dbPassword.invalid && connectAndResetForm.controls.dbPassword.touched)'
+                                                [ngClass]="{'error': (connectAndResetForm.controls.dbPassword.invalid && connectAndResetForm.controls.dbPassword.touched)}">
+                                                This field is mandatory
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="FormRow clear">
+                                        <div class="FormColumn">
+                                            <label>Database Schema</label>
+                                            <!-- <select id="dbSchema1" name="schemas[]" multiple formControlName="dbSchema">
+                                                        <option *ngFor="let schema of dbSchemas" value="{{schema}}">{{schema}}</option>
+                                                    </select> -->
+                                            <select id="dbSchemas" name="schemas[]" formControlName="dbSchemas" multiple="multiple">
+                                                <option *ngFor="let schema of dbSchemas" value="{{schema}}">{{schema}}</option>
+                                            </select>
+                                            <!-- <div class="form-group " *ngIf='(connectAndResetForm.controls.dbSchemas.invalid && connectAndResetForm.controls.dbSchemas.touched)'
+                                                    [ngClass]="{'error': (connectAndResetForm.controls.dbSchemas.invalid && connectAndResetForm.controls.dbSchemas.touched)}">
+                                                    This field is mandatory
+                                                </div> -->
+                                            <!-- <label>Database Schema</label>
+                                            <input type="text" name="dbSchemas" id="dbSchemas" formControlName="dbSchemas" (focus)=showDropdown() [ngClass]="{'error': (connectAndResetForm.controls.dbSchemas.invalid && connectAndResetForm.controls.dbSchemas.touched)}"> -->
+                                            <div class="form-group " *ngIf='(connectAndResetForm.controls.dbSchemas.invalid && connectAndResetForm.controls.dbSchemas.touched)'
+                                                [ngClass]="{'error': (connectAndResetForm.controls.dbSchemas.invalid && connectAndResetForm.controls.dbSchemas.touched)}">
+                                                This field is mandatory
+                                            </div>
+                                        </div>
+
+                                        <div class="FormColumn">
+
+                                        </div>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="ButtonRow">
+                                        <button type="button" class="ResetBtn" (click)="resetConnectForm=true">RESET</button>
+                                        <button type="submit" class="ConnectBtn">CONNECT</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- rdms-dbconnection Modal end -->
+
+        <!-- Modal -->
+        <div id="openRDBMSPopup" class="modal fade modal-popup rdbms-popup" data-backdrop="static" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+
+
+                        <span class="close" data-dismiss="modal" (click)="closeRDBMSPopup()"></span>
+                        <h4 class="modal-title">Create Jobs</h4>
+                    </div>
+
+
+                    <div class="modal-body">
+                        <div class="modal-body-header">
+                            <li>Connect</li>
+                            <li class="active">Ingest</li>
+                        </div>
+
+                        <div [hidden]="showMultitable">
+                            <div class="ResetInfo">
+                                <div class="ResetImg"></div>
+                                <div class="ResetText">
+                                    <span>Is this Multi-Table Ingestion?</span>
+                                </div>
+                                <div class="YesNoBtn">
+                                    <button type="button" class="YesBtn" (click)="getMultiTableValue(true)">Yes</button>
+                                    <button type="button" class="NoBtn" (click)="getMultiTableValue(false)">No</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-message" id="action-result">
+                            <div class="action-icon failure"></div>
+                            <div class="action-text">
+                                <span></span>
+                            </div>
+                        </div>
+
+                        <div class="activity-wrapper">
+                            <span class="column-sel">{{selectedColumnsCount}} Columns Selected</span>
+                            <div class="search-wrapper float-right">
+                                <input type="text" [(ngModel)]="searchTable" (keyup)="searchTables()" placeholder="Search by Table Name" />
+                                <button type="button">
+                                    <img src="../../assets/images/Search.png" />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-accordion-wrapper">
+                            <div class="panel-group" id="accordion">
+                                <div class="panel panel-default" *ngFor="let table of tablesList; let i = index;">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="icon maximize collapsed" data-toggle="collapse" data-parent="#accordion" href="#table-area{{i}}" (click)="fetchColumns(table, $event)"></a>
+                                            <label class="checkbox-container">
+                                                <input name="table-check" type="checkbox" [disabled]="!table.columnsFetched" [(ngModel)]="table.allCloumnsChecked" (ngModelChange)="checkAllColumns(table, $event)">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                            <a id="src_{{table.title}}" class="source-table-name" data-toggle="collapse" data-parent="#accordion" href="#table-area{{i}}"
+                                                (click)="fetchColumns(table, $event)">{{table.schema}}.{{table.entityName}}</a>
+                                            <!-- <a class="target-table-name float-right" href="#">Table_Name_1_dest</a> -->
+                                        </h4>
+                                        <input id="dest_{{table.title}}" class="col-input target-table-name float-right" type="text" value="{{table.entityName}}_dest"
+                                        />
+                                    </div>
+                                    <div id="table-area{{i}}" data-parent="#accordion" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <table class="content-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>column name</th>
+                                                        <th>data type</th>
+                                                        <th>target column name</th>
+                                                        <th>target datatype</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="4">
+                                                            <div class="search-wrapper">
+                                                                <input type="text" [(ngModel)]="searchColumn" (keyup)="searchColumns(table)" placeholder="Search by Column Name" />
+                                                                <button type="button">
+                                                                    <img src="../../assets/images/Search.png" />
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <ng-container *ngIf="(table.columnsList | json) != '{}'">
+                                                        <tr *ngFor="let column of table.columnsList">
+                                                            <td>
+                                                                <label class="checkbox-container">{{column.entityName}}
+                                                                    <input name="col-check" type="checkbox" [(ngModel)]="column.checked" (ngModelChange)="checkColumns(table, column, $event)">
+                                                                    <span class="checkmark"></span>
+                                                                </label>
+                                                            </td>
+                                                            <td>{{column.dtype}}</td>
+                                                            <td>
+                                                                <input class="col-input" type="text" readonly value="{{column.entityName}}" />
+                                                            </td>
+                                                            <td>
+                                                                <input class="col-input" type="text" readonly value="{{column.dtype}}" />
+                                                            </td>
+                                                        </tr>
+                                                    </ng-container>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comments-wrapper">
+                            <textarea [(ngModel)]='comments' placeholder="Enter Comments"></textarea>
+                            <span class="char-left">0/1024 Characters</span>
+                        </div>
+
+                        <div [hidden]="!columnNotSelectedMesg" id="ingest-invalid-msg">
+                            Select atleast one Table.
+                        </div>
+
+                        <div [hidden]="!destTblNotMentionedMesg" id="ingest-invalid-msg">
+                            Destination Table Name is mandatory.
+                        </div>
+                        <div class="button-wrapper">
+                            <button id="submit-ingestion" class="btn btn-primary btn-lg" (click)="checkVal();">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- TimeSeries Modal start -->
+        <div class="modal fade modal-popup file-popup" id="timeSeriesModal" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content filepopup-content popup-modal">
+                    <div class="modal-header">
+                        <span class="close" (click)="timeseriesResetCSVUpload()" data-dismiss="modal"></span>
+                        <h4 class="modal-title">File Ingestion</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="file-wrapper">
+                            <div class="action-message" id="timeseries-action-result">
+                                <div class="action-icon failure"></div>
+                                <div class="action-text">
+                                    <span>Text will go here</span>
+                                </div>
+                                <!-- <span class="close"></span> -->
+                            </div>
+                            <div class="file-input">
+                                <div class="file-info">
+                                    <span class="file-name">{{timeseriesCSVname}}</span>
+                                    <span class="close" (click)="timeseriesResetCSVUpload()"></span>
+                                </div>
+                                <div class="file-btn">
+                                    <span class="folder-icon"></span>
+                                    <input type="file" id="timeseries-input-file" name="timeseries-input-file" accept=".csv" (change)="timeseriesCSVUpload($event.target.files)"
+                                    />
+                                </div>
+                            </div>
+                            <div class="comments-wrapper">
+                                <textarea class="comments-textarea" name="timeseries-flow-creation-comments" [(ngModel)]="timeseriesCSVComments" placeholder="Enter Flow Creation Comments"></textarea>
+                                <span class="char-left">0/1024 Characters</span>
+                            </div>
+                        </div>
+                        <div class="table-area" id="timeseries-table-area">
+                            <div class="table-header">
+                                <span class="header-text">Please select Data Type</span>
+                                <p class="float-right">
+                                    <span class="mandatory">*</span>Data type selection is mandatory</p>
+                            </div>
+                            <table id="timeseries-csvTable" class="table table-view">
+                                <thead>
+                                    <tr>
+                                        <th>Column Name</th>
+                                        <th>Data Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let column of timeseriescsvColumns;">
+                                        <tr>
+                                            <td>{{column}}</td>
+                                            <td>
+                                                <select id="{{column}}_datatype" name="timeseries-data-type" (change)="timeseriesDisplayDateField($event.target.value,column)">
+                                                    <option value="INT">INT</option>
+                                                    <option value="FLOAT">FLOAT</option>
+                                                    <option value="DOUBLE">DOUBLE</option>
+                                                    <option value="DECIMAL">DECIMAL</option>
+                                                    <option value="TIMESTAMP">TIMESTAMP</option>
+                                                    <option value="DATE">DATE</option>
+                                                    <option value="STRING">STRING</option>
+                                                    <option value="VARCHAR">VARCHAR</option>
+                                                    <option value="CHAR">CHAR</option>
+                                                    <option value="BOOLEAN">BOOLEAN</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <!-- <input id="data-type-{{column}}" type="text" name="date-format"
+                                                    placeholder="Date Format" /> -->
+                                                <select id="timeseries-data-type-{{column}}" name="timeseries-date-format" style="display: none;" required>
+                                                    <option value="dd/MM/yy">dd/MM/yy</option>
+                                                    <option value="dd/MM/yyyy">dd/MM/yyyy</option>
+                                                    <option value="dd/MMM/yyyy"> dd/MMM/yyyy</option>
+                                                    <option value="dd/MMMM/yyyy">dd/MMMM/yyyy</option>
+                                                    <option value="dd/MM/yyyy HH:mm:ss">dd/MM/yyyy HH:mm:ss</option>
+                                                    <option value="dd/M/yy">dd/M/yy</option>
+                                                    <option value="MM/dd/yyyy HH:mm">MM/dd/yyyy HH:mm</option>
+                                                    <option value="dd/MM/yyyy hh:mm:ss">dd/MM/yyyy hh:mm:ss</option>
+                                                    <option value="dd/MM/yyyy HH:mm:ss a">dd/MM/yyyy HH:mm:ss a</option>
+                                                    <option value="dd/MM/yyyy HH:mm:ss a z">dd/MM/yyyy HH:mm:ss a z</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="button-wrapper">
+                            <button id="timeseries-submit-csv" class="btn btn-primary btn-sm" disabled=true (click)="timeseriesSubmitCSV()">Submit</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- TimeSeries Modal end -->
+    </section>
+</main>

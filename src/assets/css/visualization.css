@@ -1,0 +1,281 @@
+footer {
+	margin-top: 0px;
+}
+main.container-wrapper {
+	padding-left: 0px;
+	padding-right: 0px;
+	color: #000;
+}
+main.container-wrapper .main-header-wrapper {
+	padding: 5px 25px;
+	border-bottom: 1px solid rgba(160, 160, 160, 0.5);
+	background-color: rgba(204, 204, 204, 0.1);
+}
+main.container-wrapper .main-header-wrapper span.header-text {
+	font-size: 22px;
+	color: #000000;
+	font-family: "Myriad Pro";
+	text-transform: uppercase;
+}
+main.container-wrapper .content-wrapper {
+	position: relative;
+	background-color: #d3d3d333;
+}
+.content-wrapper .left-wrapper {
+	display: inline-block;
+	width: 18%;
+	background-color: #F0FAFF;
+	border-top: none;
+	border-right: 1px solid #ccc;
+	border-bottom: none;
+	padding: 30px 23px 30px 34px;
+    height: 615px;
+}
+.left-wrapper .select-wrapper select {
+	width: 100%;
+	height: 30px;
+	font-size: 14px;
+	padding: 2px 0px 0px;
+}
+.left-wrapper .column-list {
+	margin-top: 6px;
+}
+.left-wrapper .column-list  {
+		
+	padding: 6px 0px;
+    /*margin: 10px 0px;*/
+    text-align: left;
+    cursor: pointer;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(204,204,204,0.5);
+}
+.left-wrapper .column-list .x:before {
+	display: inline-block;
+	content: "#";
+	width: 8px;
+    height: 14px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: #54b498;
+    font-size: 13px;
+	font-family: "Myriad Bold";
+}
+.left-wrapper .column-list .y:before {
+	display: inline-block;
+	content: "A";
+	width: 8px;
+    height: 14px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: #FAAF34;
+    font-size: 13px;
+	font-family: "Myriad Bold";
+}
+.content-wrapper .right-wrapper {
+	display: inline-block;
+	width: 81.6%;
+	vertical-align: top;
+	margin-left: 2px;
+}
+.content-wrapper .right-wrapper .right-upper-wrapper {
+	padding: 25px 25px 25px 42px;
+	background-color: #fff;
+	margin-left: -2px;
+	border-bottom: 1px solid #ccc;
+	width: 100%;
+}
+.right-upper-wrapper>div {
+	display: inline-block;
+}
+.right-upper-wrapper .col {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+.right-upper-wrapper .column-selection-wrapper .column-selection {
+	border: 1px solid #ccc;
+	width: 100%;
+    height: 32px;
+	margin-bottom: 20px;
+	display: inline-block;
+
+}
+.column-selection label {
+	margin: 0;
+    background: #4e4e4e;
+    color: white;
+    text-align: center;
+    font-family: "Myriad Bold";
+    vertical-align: middle;
+    width: 36px;
+    height: 30px;
+	line-height: 200%;
+	display: inline-block;
+	
+}
+
+.column-selection .x {
+	display: inline;
+	/* padding-left: 10px; */
+	width: 8px;
+    height: 15px;
+    margin-right: 2px;
+    color: #54b498;
+    font-size: 13px;
+	font-family: "Myriad Bold";
+	content: "#";
+	 cursor: pointer;
+    
+}
+.column-selection .col-tags {
+	display: inline;
+}
+.column-selection .cols {
+	display: inline;
+    background-color: rgba(204, 204, 204, 0.1);
+    margin-left: 5px;
+    padding: 3px;
+}
+.column-selection li {
+	list-style-type: none;
+    display: inline;
+    font-size: 12px;
+}
+.column-selection li.x:before {
+	display: inline-block;
+	content: "#";
+	width: 8px;
+    height: 15px;
+    margin-right: 2px;
+    cursor: pointer;
+    color: #54b498;
+}
+.column-selection li.y:before {
+	display: inline-block;
+	content: "A";
+	width: 8px;
+    height: 15px;
+    margin-right: 2px;
+    cursor: pointer;
+    color: #FAAF34;
+}
+.column-selection .col-close {
+	background: url('../images/close2.png') no-repeat;
+	background-size: 12px 13px;
+	width: 15px;
+	height: 12px;
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	top: 2px;
+	left: 3px;
+} 
+.right-upper-wrapper button.publish-btn,
+.right-upper-wrapper button.publish-btn:hover,
+.right-upper-wrapper button.publish-btn:active {
+	color: #4d84c4;
+	background-color: #fff;
+    border-color: #4d84c4;
+    border-radius: 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 7px 16px 5px;
+    box-shadow: none !important;
+    border: 2px solid;
+}
+.right-upper-wrapper .aggregate-select {
+	width: 100%;
+    height: 32px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    padding: 2px 0px 0px;
+}
+.right-upper-wrapper .chart-selection-wrapper {
+	padding-left: 50px;
+}
+.right-upper-wrapper .chart-selection-wrapper label {
+	font-size: 16px;
+	padding-left: 24px;
+	margin-bottom: 5px;
+}
+.right-upper-wrapper .chart-selection-wrapper .radio-option-wrapper label.container {
+	display: inline;
+	position: relative;
+	padding-left: 24px;
+	cursor: pointer;
+	font-size: 22px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.radio-option-wrapper label.container img {
+	width: 77px;
+    height: 77px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    background: rgba(204, 204, 204, 0.1);
+}
+.radio-option-wrapper label.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    display: none;
+}
+.radio-option-wrapper label.container .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 14px;
+    width: 14px;
+    background-color: #fff;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+}
+.container input:checked ~ .checkmark {
+    background-color: white;
+}
+.radio-option-wrapper label.container .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+.container input:checked ~ .checkmark:after {
+    display: block;
+}
+.radio-option-wrapper label.container .checkmark:after {
+ 	top: 3px;
+    left: 3px;
+    width: 6px;
+    height: 6px;
+	border-radius: 50%;
+	background: #2196F3;
+}
+.right-upper-wrapper .btn-wrapper {
+	display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.content-wrapper .right-wrapper .right-lower-wrapper {
+	width: 99%;
+    height: 420px;
+    margin: 7px 0px 7px 5px;
+    background: white;
+    box-shadow: 1px 1px 1px #ccc;
+}
+.content-wrapper{
+	min-height: 574px;
+}
+#invalidFeedback
+{
+	width: 100%;
+margin-top: .25rem;
+font-size: 80%;
+color: #dc3545;
+}
+.labelClass{
+	margin-left: 20%;
+}
+.labelClass2{
+	margin-left: 20%;
+	/* margin-top: 10%; */
+}

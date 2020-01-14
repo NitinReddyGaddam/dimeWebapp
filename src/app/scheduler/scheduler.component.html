@@ -1,0 +1,184 @@
+<main class="container-fluid container-wrapper">
+    <section class="main-container">
+        <div class="main-header-wrapper">
+            <span class="header-text">Scheduler</span>
+            <!-- <button class="headerbtn btn btn-primary btn-lg float-right" (click)="viewScheduleOpts()" hidden>Create</button>
+            <button class="headerbtn2 btn btn-primary btn-lg float-right" (click)="showScheduledList()">Scheduled List</button> -->
+
+        </div>
+        <div id=content-wrapper>
+            <div class="col-md-12 position-absolute" *ngIf="showLoader">
+                <div class="loader-circle"></div>
+            </div>
+
+            <div class="left-part">
+                <div class="alert" style="display:none">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{statusMessage}}
+                </div>
+                <form name="form" (ngSubmit)="schedularForm.form.valid && submit()" #schedularForm="ngForm">
+                    <div class="left-div1">
+                        <div><a href="javascript:void(0);">Schedular Name...</a></div>
+                        <input required ngModel type="text" id="schedularName" placeholder="Enter Schedular Name" name="schedularName"
+                            #schedularName="ngModel" [ngClass]="{'formClass': schedularForm.submitted && schedularName.invalid}">
+                    </div>
+
+                    <div class=left-div2>
+                        <!-- <div><a href="javascript:void(0);" (click)="showWorkflowsfunc()">Choose a workflow...</a></div> -->
+                        <div><a href="javascript:void(0);">Choose a workflow...</a></div>
+                        <ng-select required class="custom" [items]="jobsList" bindLabel="name" bindValue="id" [addTag]="jobTag"
+                            [multiple]="true" placeholder="Select Flows" [(ngModel)]="selectedFlows" name="selectedFlows"
+                            #workFlowList="ngModel" [ngClass]="{'invalidNgSelect': schedularForm.submitted && workFlowList.invalid}">
+                        </ng-select>
+                        <p style="margin-left: 10px;">
+                            Selected Flow Ids: {{selectedFlows}}
+                        </p>
+                    </div>
+
+                    <div>
+                        <a href="javascript:void(0);" class="card-link">Schedule at...</a>
+                    </div>
+
+
+
+                    <div id="cronDiv"></div>
+                    <div class="date-wrapper">
+
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span class="add-on input-group-addon">
+                                        <i class="fa fa-calendar"><span class="date">From</span></i>
+                                    </span></span>
+                            </div>
+                            <input ngModel type="text" name="startdate" class="selectdate" id="startDate" [(ngModel)]="startdate"
+                                required #startdateV="ngModel" [ngClass]="{'formClass': schedularForm.submitted && startdateV.invalid}"/>
+                            <!-- <input placeholder="Date Time:" [(ngModel)]="dateTime" [owlDateTimeTrigger]="dt"
+                                [owlDateTime]="dt">
+                            <owl-date-time #dt></owl-date-time> -->
+                        </div>
+                        <div class="input-group input-group-sm mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span class="add-on input-group-addon">
+                                        <i class="fa fa-calendar"><span class="date">To</span></i>
+                                    </span></span>
+                            </div>
+                            <input type="text" name="enddate" class="selectdate" id="endDate" [(ngModel)]="enddate"
+                                required #endDateV="ngModel" [ngClass]="{'formClass': schedularForm.submitted && endDateV.invalid}" />
+                        </div>
+                        <ng-select required class="customTimezone" [items]="timezoneList" bindLabel="name" bindValue="name"
+                            [addTag]="timezoneTag" [multiple]="false" placeholder="Select TimeZone" [(ngModel)]="selectedTZone"
+                            name="selectedTimeZone">
+                        </ng-select>
+                    </div>
+                    <div>
+
+                    </div>
+
+                    <div class=Options>
+                        <a (click)="changeSpan()"><i class="fa fa-sliders"></i>
+                            <span id="optionSpan1">Advanced Options</span><span id="optionSpan2" style="display:none">Hide</span></a>
+                    </div>
+                    <div class=OptionsList style="display:none">
+                        <table class="table scheduler">
+                            <tbody>
+                                <tr>
+                                    <td>Timeout</td>
+                                    <td>:</td>
+                                    <input type="text" id="timeout" class="scheduleAdvanceOpt" placeholder="Enter Timeout">
+                                </tr>
+                                <tr>
+                                    <td>Concurrency</td>
+                                    <td>:</td>
+                                    <input type="text" id="concurrency" class="scheduleAdvanceOpt" placeholder="Enter Concurrency">
+                                </tr>
+                                <tr>
+                                    <td>Execution</td>
+                                    <td>:</td>
+                                    <input type="text" id="execution" class="scheduleAdvanceOpt" placeholder="Enter Execution">
+                                </tr>
+                                <tr>
+                                    <td>Throttle</td>
+                                    <td>:</td>
+                                    <input type="text" id="throttle" class="scheduleAdvanceOpt" placeholder="Enter Throttle">
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- <button class="btn btn-primary btn-sm" id="submitBtn" (click)="submit()">Submit</button> -->
+                    <button class="btn btn-primary btn-sm" id="submitBtn">Submit</button>
+                </form>
+
+            </div>
+            <div class="right-part">
+                <div class="container">
+                    <div class="joboptions">
+                        <div class="search-wrapper">
+                            <input type="text" [(ngModel)]="search" (keyup)="searchJobs()" placeholder="Search by Job Name" />
+                            <button type="button">
+                                <img src="../../assets/images/Search.png" />
+                            </button>
+                        </div>
+                        <div class="btnOptions float-right">
+                            <button type="button" class="btn btn-primary btn-sm optbtn" id="resumebtn" (click)="oozieOptions('resume',$event)"
+                                data-toggle="popover" data-content="" disabled><i class="fa fa-play"></i>Resume</button>
+                            <button type="button" class="btn btn-secondary btn-sm optbtn" id="suspendbtn" (click)="oozieOptions('suspend',$event)"
+                                data-toggle="popover" data-content="" disabled><i class="fa fa-pause"></i>Suspend</button>
+                            <button type="button" class="btn btn-danger btn-sm" id="killbtn" (click)="oozieOptions('kill',$event)"
+                                data-toggle="popover" data-content="" disabled><i class="fa fa-times"></i>Kill</button>
+                        </div>
+                    </div>
+                    <table class="table schedulerlist-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>name</th>
+                                <th>deploy status</th>
+                                <th>exec status</th>
+                                <th>frequency</th>
+                                <th>start time</th>
+                                <th>end time</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <ng-container *ngFor="let job of filteredCoordList; let i = index;">
+                                <tr>
+                                    <td>
+                                        <label class="radio-container">
+                                            <input type="radio" name="selectCoordJob" (click)="selectedJob(job)"
+                                                [value]="job" required />
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        {{job.coordxmlname}}
+                                    </td>
+                                    <td>
+                                        {{job.deployStatus}}
+                                    </td>
+                                    <td>
+                                        {{job.execStatus}}
+                                    </td>
+                                    <td>
+                                        {{job.frequency}}
+                                    </td>
+                                    <td>
+                                        {{job.starttime}}
+                                    </td>
+                                    <td>
+                                        {{job.endtime}}
+                                    </td>
+
+                                </tr>
+
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+</main>

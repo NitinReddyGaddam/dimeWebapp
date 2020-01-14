@@ -1,0 +1,49 @@
+<main class="container-fluid container-wrapper">
+  <section class="main-container">
+    <div class="main-header-wrapper">
+      <span class="header-text">Vehicle Level Prediction</span>
+      <div class="select-wrapper float-right" style="width: 350px;">
+        <select id="select-col" name="select-col" style="width: 70%;margin-right: 10px;padding: .3rem" (change)="selPredCount($event.target.value)">
+          <option value="" hidden>Select Number Of Predictions</option>
+         
+          <option  value="100">100 </option>
+          <option  value="200">200 </option>
+          <option  value="300">300 </option>
+        </select>
+        <button style="width: 25%" type="submit" class="btn predict-btn" (click)="getVehPredData()">Predict</button>
+      </div>
+    </div>
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-md-12 position-absolute" *ngIf="showLoader">
+          <div class="loader-circle" style="height:350px"></div>
+        </div>
+        
+        <div class="col-md-12 position-absolute tbl-loc">
+            <table class="table ews-table" *ngIf="showTable">
+                <thead>
+                  <tr>
+                    <th>Serial Number</th>
+                    <th>Model</th>
+                    <th>Owner Location</th>
+                    <th>Owner State</th>
+                    <th>Owner Country</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of tblData">
+                    
+                    <td>{{ data.serialnumber }}</td>
+                    <td>{{ data.model }}</td>
+                    <td>{{ data.ownerlocation }}</td>
+                    <td>{{ data.ownerstate }}</td>
+                    <td>{{ data.ownercountry }}</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>

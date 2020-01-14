@@ -1,0 +1,423 @@
+.PopupContainer {
+     font-family:arial;
+     width: 60%;
+     position:relative;
+     border: 1px solid #ccc;
+     padding: 20px 0;
+     border-radius: 5px;
+     margin: 20px 0 0 20px;
+}
+ .PopupHeading {
+     padding: 0 0 15px 20px;
+     border-bottom: 1px solid #ccc;
+}
+ .CloseIcon {
+	background-image: url(../images/Close.png);
+    padding: 5px;
+    background-repeat: no-repeat;
+    position: absolute;
+    right: 40px;
+    top: 25px;
+    cursor: pointer;
+}
+ .PopupHeading h2 {
+     font-size:20px;
+     color:#231f20;
+     font-weight: normal;
+}
+ .MandatoryField {
+    font-size: 12px;
+    color: #ed1c24;
+}
+
+ .ResetImg{
+	float: left;
+    background-image: url(../images/Reset.png);
+    background-repeat: no-repeat;
+    background-color: #ffab0d;
+    display: inline-block;
+    background-position: center 15px;
+    width: 75px;
+    height: 60px;
+}
+
+.SuccessImg{
+    float: left;
+    background-image: url(../images/Successful.png);
+    background-repeat: no-repeat;
+    background-color: #54B848;
+    height: 60px;
+    display: inline-block;
+    background-position: center 15px;
+    width: 75px;
+}
+
+ .YesBtn {
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    background: #4d84c4;
+    color: #ffffff;
+    margin-right: 10px;
+    width: 55px;
+    height: 30px;
+    font-family: Myriad Semi Bold;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+ .NoBtn {
+    cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    background: #d8d8d8;
+    width: 55px;
+    height: 30px;
+    color: #231f20;
+}
+ .YesNoBtn {
+	float: right;
+    margin-right: 18px;
+    display: flex;
+    height: 60px;
+    align-items: center;
+}
+ .ResetText{
+	display: inline-block;
+ }
+
+ .ResetText span,.SuccessText {
+	color: #464646;
+    font-size: 16px;
+    font-family: Myriad Semi Bold;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding: 0px 0px 0px 18px;
+}
+
+ .ResetInfo,.connectSuccessInfo {
+    float: left;
+    width: 100%;
+    border: 1.5px solid #b4b4b4;
+    margin: 20px 0 26px 0;
+}
+
+.clear {
+     clear:both;
+}
+
+.ButtonRow {
+    text-align: right;
+    margin: 15px -20px 10px 0px;
+}
+
+.ResetBtn {
+	cursor: pointer;
+    margin-right: 15px;
+    border-radius: 3px;
+    background: #ffffff;
+    border: 1.5px solid #4d84c4;
+    height: 35px;
+    width: 135px;
+    color: #4d84c4;
+    font-family: Myriad Semi Bold;
+    font-size: 14px;
+}
+.ConnectBtn,.worklineSubmit {
+	cursor: pointer;
+    border: none;
+    border-radius: 3px;
+    background: #4d84c4;
+    height: 35px;
+    width: 135px;
+    color: #ffffff;
+    font-family: Myriad Semi Bold;
+    font-size: 14px;
+	text-transform:uppercase;
+}
+
+.ConnectDiv input, .ConnectDiv select {
+	width: 292px;
+    padding: 8px 10px 8px 10px;
+    box-sizing: border-box;
+    height: 35px;
+    color: #000000;
+    border: 1px solid rgba(77,77,78,0.3);
+}
+
+.FormColumn label {
+	font-size: 13px;
+    color: #4d4d4e;
+    display: block;
+    font-weight: 100;
+}
+
+.FormColumn {
+	margin: 0px -25px 0px 0px;
+    display: inline-block;
+    width: 300px;
+}
+
+ .ConnectDiv {
+	padding: 26px 20px 0 0px;
+}
+
+.ConnectDiv p {
+	font-size: 11px;
+    color: #939597;
+    margin: 0px 0px 12px 0px;
+}
+
+.popup-modal{
+    border-radius: 0px;
+    border: 1px solid rgba(160,160,160,0.5);
+}
+ 
+.popup-modal .modal-header{
+	color: #231f20;
+    height: 65px;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 0px 0px 0px 40px;
+    background-color: rgba(204,204,204,0.1);
+    border-bottom: 2px solid rgba(160,160,160,0.1);
+} 
+
+.File-btn-content{
+	display: table;
+    height: 60px;
+}
+
+.File-btn-content button,.RDBMS-btn-content button{
+    display: table-cell;
+    vertical-align: text-top;
+    width: 135px;
+    height: 35px;
+    text-transform: uppercase;
+    font-size: 14px;
+    border: 1.5px solid #4d84C4;
+    color: #4d84C4;
+}
+
+.File-btn-content span
+{
+	display: table-cell;
+    padding: 0px 0px 0px 20px;
+}
+
+.RDBMS-btn-content{
+	display: table;
+    height: 60px;
+}
+
+.RDBMS-btn-content span
+{
+	display: table-cell;
+	padding: 15px 10px 15px 25px;
+}
+
+.modal-header .close
+{
+	opacity:1;
+}
+
+.popup-modal .modal-body {
+    padding: 26px 40px 26px 40px;
+}
+
+.step-flex-container{
+	display: flex;
+    justify-content: flex-start;
+    border-bottom: 1px solid rgba(26,26,26,0.1);
+    padding: 0px 10px 0px 0px;
+}
+
+.step-flex-container .step{
+	font-size: 16px;
+    width: 95px;
+    color: #000000;
+	text-align: center;
+}
+
+.disabled-step{
+	opacity: 0.4;
+    padding: 0px 0px 0px 50px;
+}
+
+.active-step
+{
+    border-bottom: 4px solid #4f89c7;
+    font-family: Myriad Bold;
+}
+
+#rdms-dbconnection .modal-dialog {
+    width: 800px;
+}
+
+.modal {
+  overflow-y:auto;
+}
+
+select:disabled,input:disabled
+{
+	background-color: rgba(1,1,1,0.05);
+    color: #6d6e70;
+}
+
+button:disabled
+{
+	background-color: rgba(77,132,196,0.2);
+}
+
+button.ResetBtn:disabled{
+	
+	color: rgba(35,31,32,0.2);
+    border-color: rgba(77,132,196,0.2);
+}
+
+#connectAndResetForm .error{
+	color: #c6001e;
+    padding: 6px 0px 0px 0px;
+}
+
+#connectAndResetForm input.error{
+	
+	border-bottom: 4px solid #ed1c24;
+}
+
+.FormRow .FormColumn:nth-child(2),.user-pipeline-blk .FormColumn:nth-child(2)
+{
+	float: right;
+}
+
+#createjobs .modal-title,#rdms-dbconnection .modal-title{
+	font-size: 20px;
+    color: #231f20;
+	font-family:"Myriad Semi Bold";
+}
+
+.step p{
+	margin:0px 0px 5px 0px;
+}
+
+.FormRow{
+	margin: 0px 0px 30px 0px;
+}
+
+.flow-radio-option label {
+	font-size: 16px;
+    width: 120px;
+    color: #000000;
+    padding: 0px;
+    margin: 0px 20px 0px 20px;
+}
+
+.flow-radio-option .search-table-name
+{
+    display: block;
+    margin: 26px 0px 0px 0px;
+    width: 292px;
+    padding: 5px 10px 5px 10px;
+}
+
+#workflow-table_length,#workflow-table_filter,#workflow-table_info,
+#pipeline-table_length,#pipeline-table_filter,#pipeline-table_info,
+.pipeline-block{
+	display:none;
+}
+
+#workflow-table thead tr:nth-child(2) th:first-child input,
+#pipeline-table thead tr:nth-child(2) th:first-child input{
+	display:none;
+}
+
+#workflow-table,#pipeline-table{
+	margin: 25px 0px 0px 0px;
+	table-layout:fixed;
+}
+
+#workflow-table thead tr th:first-child,#pipeline-table thead tr th:first-child{
+	width: 5%;
+}
+
+#workflow-table tbody input,#pipeline-table tbody input
+{
+	margin: -7px 0px 0px -20px;
+}
+
+#workflow-table thead input,#pipeline-table thead input
+{
+	margin: 20px 0px 20px 0px;
+    padding: 5px 0px 5px 7px;
+}
+
+#workflow-table thead tr:first-child th,#pipeline-table thead tr:first-child th {
+    height: 40px;
+    padding: 10px;
+    font-family: "Myriad Bold";
+	color: rgb(78, 132, 196);
+	background-color: rgba(108, 207, 246, 0.1);
+	text-transform: uppercase;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+#workflow-table thead tr:nth-child(2),#pipeline-table thead tr:nth-child(2){
+    border-bottom: 1px solid #ccc;
+}
+
+#workflow-table thead tr:first-child,#pipeline-table thead tr:first-child
+{
+	border: 1px solid rgba(108, 207, 246, 0.7);
+}
+
+#workflow-table tbody tr td,#pipeline-table tbody tr td {
+    border-bottom: 1px solid #ccc;
+    color: #000000;
+    vertical-align: middle;
+    padding: 15px 0px 10px 0px;
+}
+
+#workflow-table_paginate a,#pipeline-table_paginate a{
+	color:#337ab7;
+	padding: 10px;
+}
+
+#workflow-table_paginate,#pipeline-table_paginate{
+	margin:10px;
+}
+
+.workSubmit-blk{
+	
+	text-align:right;
+}
+
+.user-pipeline-blk .FormColumn label
+{
+	font-size: 13px;
+    color: #4d4d4e;
+    display: block;
+    font-weight: 100;
+    margin: 0px 0px 5px 0px;
+    width: auto;
+}
+
+.user-pipeline-blk{
+    margin: 20px 0px 30px 0px;
+}
+
+.user-pipeline-blk select{
+	width: 220px;
+    padding: 8px 10px 8px 10px;
+    box-sizing: border-box;
+    height: 35px;
+    color: #000000;
+    border: 1px solid rgba(77,77,78,0.3);
+}
+
+.user-pipeline-blk .FormColumn {
+    margin: 0px -25px 0px 0px;
+    display: inline-block;
+    width: 245px;
+}

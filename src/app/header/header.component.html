@@ -1,0 +1,151 @@
+<!-- <script>
+    $(".UserDetailsSection, .dropdown").hover(
+        function () {
+            $('>.dropdown-menu', this).stop(true, true).fadeIn("fast");
+            $(this).addClass('open');
+        },
+        function () {
+            $('>.dropdown-menu', this).stop(true, true).fadeOut("fast");
+            $(this).removeClass('open');
+        });
+</script> -->
+<div class="dime-container">
+    <header>
+        <div class="dime-logo">
+            <img src="../../assets/images/Logo_for_blackbg2.png" alt="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li>
+                    <a href="javascript:void(0);" routerLink="/home" (click)="changeHeader('home', $event)">Home</a>
+                </li>
+                <li class="UserDetailsSection dropdown">
+                    <a href="javascript:void(0);" routerLink="/data-ingestion" (click)="changeHeader('data-ingestion', $event)">Data Ingestion</a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-submenu ">
+                            <a class="test" href="javascript:void(0);" routerLink="/scheduler">Scheduler</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" routerLink="/transform" (click)="changeHeader('transform', $event);func();">Transform</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" routerLink="/visualization" (click)="changeHeader('visualization', $event)">Visualization</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" routerLink="/data-access" (click)="changeHeader('data-access', $event)">Data Access
+                    </a>
+                </li>
+                <li class="UserDetailsSection dropdown" id="mfgSolList">
+
+                    <a href="javascript:void(0);">Manufacturing
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-submenu ">
+                            <a class="test" href="javascript:void(0);" (click)="changeMfgHeader('manufacturing', $event);showIce();">IPC</a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a class="test" href="javascript:void(0);" (click)="changeMfgHeader('manufacturing', $event);trial('Help')">Help</a>
+                                </li>
+                                <li>
+                                    <a class="{{classIng}}" href="javascript:void(0);" (click)="changeMfgHeader('manufacturing', $event);ingestionRoute();">Ingestion Pipeline
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="{{classViz}}" href="javascript:void(0);" (click)="changeMfgHeader('manufacturing', $event);" routerLink="/ice-visualization">Visualization</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="dropdown-submenu ">
+                            <a class="test" href="javascript:void(0);">mBIDS</a>
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a class="test" href="javascript:void(0);" (click)="trial('../../assets/images/Supply_Chain_Management.jpg');changeMfgHeader('manufacturing', $event)">SupplyChain Management
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="test" href="javascript:void(0);" (click)="trial('../../assets/images/FinancialManagement.jpg');changeMfgHeader('manufacturing', $event)">Financial Management
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="test" href="javascript:void(0);" (click)="trial('../../assets/images/Customer_Management.jpg');changeMfgHeader('manufacturing', $event)">Customer Management
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="test" href="javascript:void(0);" (click)="trial('../../assets/images/Supply_Chain_Management.jpg');changeMfgHeader('manufacturing', $event)">WorkForce Management
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <li class="dropdown-submenu ">
+                            <a class="test" href="javascript:void(0);">ADAS</a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a class="test" href="javascript:void(0);" (click)="showADAS();trial('ADASHelp');changeMfgHeader('manufacturing', $event)">Help</a>
+                                </li>
+                                <li>
+                                    <a class="test" href="javascript:void(0);" (click)=ingestionPage()>Ingestion</a>
+                                </li>
+
+                                <li>
+                                    <a class="test" href="javascript:void(0);" (click)="moveADADvisualization();changeMfgHeader('manufacturing', $event)">Visualization</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="dropdown-submenu ">
+                            <a class="test" href="javascript:void(0);">EWS</a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li>
+                                    <a class="test" href="javascript:void(0);">Help</a>
+                                </li>
+                                <li>
+                                    <a class="test" href="javascript:void(0);" (click)=ewsIngestionPage()>Ingestion</a>
+                                </li>
+
+                                <li class="dropdown-submenu ">
+                                    <a class="test" href="javascript:void(0);">Visualization</a>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li>
+                                            <a class="test" href="javascript:void(0);" (click)=ewsAggViz()>Aggregate Level Prediction</a>
+                                        </li>
+                                        <li>
+                                            <a class="test" href="javascript:void(0);" (click)=ewsVehViz()>Vehicle Level Prediction</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <li class="UserDetailsSection dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <img src="../../assets/images/User.png" alt="User"> {{userName}}
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="javascript:void(0);" routerLink="/code-repo">Code Repository</a>
+                </li>
+                <!-- <li *ngIf="userName=='Admin'">
+                    <a href="javascript:void(0);" routerLink="/admin" [queryParams]="{task: 'registerUser'}">Register User</a>
+                </li>
+                <li *ngIf="userName=='Admin'">
+                    <a href="javascript:void(0);" routerLink="/admin" [queryParams]="{task: 'viewUser'}">View Users</a>
+                </li>
+                <li> -->
+                    <a href="javascript:void(0);" (click)="logout()">LogOut</a>
+                </li>
+            </ul>
+        </li>
+    </header>
+</div>
